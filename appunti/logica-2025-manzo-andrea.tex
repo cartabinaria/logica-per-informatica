@@ -1,0 +1,4841 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  a4paper,
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+  \setmainfont[]{Libertinus Serif}
+  \setmonofont[Scale=MatchLowercase,Contextuals=Alternate,Ligatures=TeX]{Fira Code}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=25mm]{geometry}
+\usepackage{listings}
+\newcommand{\passthrough}[1]{#1}
+\lstset{defaultdialect=[5.3]Lua}
+\lstset{defaultdialect=[x86masm]Assembler}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{xcolor}
+\definecolor{codebg}{HTML}{F7F7F7}
+\definecolor{codeframe}{HTML}{DDDDDD}
+
+\usepackage{tikz}
+\usetikzlibrary{trees}
+
+\usepackage{bussproofs}
+\usepackage{ifthen}
+\usepackage{lscape}
+\usepackage{graphicx}
+
+\newenvironment{scaledprooftree}[1]
+  {\gdef\scalefactor{#1}\begin{center}\proofSkipAmount \leavevmode}%
+  {\scalebox{\scalefactor}{\DisplayProof}\proofSkipAmount \end{center}}
+
+
+\usepackage{listings}
+\lstdefinestyle{pandocCode}{
+  backgroundcolor=\color{codebg},
+  frame=none,                  % il frame lo mette tcolorbox
+  framesep=6pt,
+  % margini per tenere tutto dentro la box:
+  xleftmargin=1.2em,           % ← sposta leggermente a destra TUTTO (incl. numeri)
+  xrightmargin=0pt,
+  aboveskip=0pt, belowskip=0pt,
+  basicstyle=\ttfamily\footnotesize,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  numbers=left,                % ← numeri ON
+  numberstyle=\scriptsize\color{gray},
+  numbersep=8pt,               % ← spazio tra numeri e codice
+  tabsize=2,
+}
+\lstset{style=pandocCode}
+
+\lstdefinelanguage{lean}{
+  morekeywords={theorem,lemma,example,def,inductive,structure,namespace,end,
+    intro,intros,assume,suppose,have,show,by,exact,apply,fun,let,match,with},
+  sensitive=true,
+}
+
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{listings, skins, breakable}
+\definecolor{examplebg}{HTML}{F7F7F7}
+\definecolor{exampleframe}{HTML}{C0C0C0}
+
+% Box per testo + codice (funziona con --listings)
+\newtcolorbox{examplebox}[1][]{%
+  enhanced,
+  breakable,
+  colback=examplebg,
+  colframe=exampleframe,
+  coltitle=black,
+  fonttitle=\bfseries,
+  title=#1,
+  boxrule=0.4pt,
+  arc=2mm,
+  left=6pt, right=6pt, top=6pt, bottom=6pt,
+  width=\textwidth,               
+  before skip=16pt plus 4pt minus 2pt,
+  enlarge left by=0mm,          
+  before=\par\noindent,     
+  listing engine=listings,
+}
+
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{center}
+{\large\textcolor[HTML]{555555}{Università di Bologna}}\\[0.5em]
+{\normalsize\textcolor[HTML]{777777}{Dipartimento di Informatica}}\\[6em]
+
+{\normalsize\textcolor[HTML]{555555}{Appunti di:}}\\[0.8em]
+{\huge\bfseries Logica per l’informatica}\\[6em]
+
+{\Large Andrea Manzo}\\[1.2em]
+{\large A.S.\ 2025 / 2026}\\[6em]
+\end{center}
+\end{titlepage}
+
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\newpage
+
+\hypertarget{formule-logiche}{%
+\section{Formule logiche}\label{formule-logiche}}
+
+\hypertarget{proposizioni}{%
+\subsection{Proposizioni}\label{proposizioni}}
+
+Una \textbf{proposizione} è una frase alla quale ha senso chiedersi se
+sia vera o falsa, se valga o meno.
+
+\begin{examplebox}[Esempio]
+
+``2 è un numero pari.'' è una proposizione.\\
+Frasi come ``mangia la mela!'' o ``2'' non sono proposizioni, poiché non
+si può stabilire un valore di verità per esse.
+
+\end{examplebox}
+
+In ambito logico, esistono \textbf{linguaggi formali} che hanno regole
+rigide per la scrittura delle proposizioni, e queste proposizioni
+vengono poi usate nelle dimostrazioni per formulare \textbf{teoremi}. Un
+teorema è una proposizione che è stata dimostrata attraverso un
+ragionamento corretto.
+
+Nel corso di una dimostrazione, l'enunciato che stiamo cercando di
+provare può evolversi: partiamo da ipotesi che vengono assunte come vere
+per restringere il campo di applicazione e arriviamo alla conclusione
+che dipende dalle ipotesi fatte. Questo tipo di ragionamento, definito
+``\textbf{ipotetico}'', implica che, nel momento in cui facciamo
+un'ipotesi, non stiamo affermando che essa sia \textbf{vera in senso
+assoluto}, ma solo che la consideriamo valida all'interno di un certo
+insieme di situazioni: le ipotesi riducono i casi possibili, permettendo
+di concentrarsi su situazioni specifiche per trarre conclusioni.
+
+\hypertarget{introduzione-alla-logica-del-primordine}{%
+\subsection{Introduzione alla logica del
+prim'ordine}\label{introduzione-alla-logica-del-primordine}}
+
+In generale esistono varie logiche, la \textbf{logica del prim'ordine} è
+una delle più semplici e una delle più utilizzate.
+
+Ora, nella spiegazione della sintassi della logica del prim'ordine
+useremo una spiegazione Tarskiana, ovvero per spiegare un connettivo
+useremo lo steso connettivo del meta-livello, senza aggiungere niente di
+nuovo. Questa spiegazione presuppone che le due logiche siano coerenti
+(stesso tipo di logica).
+
+\hypertarget{sintassi}{%
+\subsubsection{Sintassi}\label{sintassi}}
+
+\begin{itemize}
+\item
+  \textbf{Falso/Assurdo/\(\bot\) (bottom)}:\\
+  Il simbolo \(\bot\) rappresenta la contraddizione, che \textbf{non
+  vale mai}. È una proposizione che è sempre falsa.
+\item
+  \textbf{Vero/\(\top\) (top)}:\\
+  Il simbolo \(\top\) rappresenta la verità, che \textbf{vale sempre}. È
+  una proposizione che è sempre vera.
+\item
+  \textbf{Predicato Applicato}:\\
+  Un predicato applicato, ad esempio ``\(2 \leqslant x\)'',
+  ``\(f(n) = 4\)'', o ``\(5 \text{ è pari}\)'', può \textbf{valere o non
+  valere}. Il valore dipende dal predicato e dai suoi argomenti.
+\item
+  \textbf{Congiunzione (\(P \land Q\))}:\\
+  La congiunzione \(P \land Q\) è vera se \textbf{entrambi} \(P\) e
+  \(Q\) sono veri. In altre parole, \textbf{\(P\) e \(Q\) devono essere
+  veri} affinché la formula sia vera.
+\item
+  \textbf{Disgiunzione (\(P \lor Q\))}:\\
+  La disgiunzione \(P \lor Q\) è vera se \textbf{almeno una} delle
+  formule \(P\) o \(Q\) è vera. Può essere vera anche se solo una delle
+  proposizioni è vera.
+\item
+  \textbf{Implicazione (\(P \Rightarrow Q\))}:\\
+  L'implicazione \(P \Rightarrow Q\) è vera se, \textbf{sotto l'ipotesi
+  che \(P\) sia vero}, anche \(Q\) deve essere vero. Se \(P\) è falso,
+  l'implicazione è sempre vera.
+\item
+  \textbf{Negazione (\(\neg P\))}:\\
+  La negazione \(\neg P\) è vera se \textbf{\(P\) implica il falso}. In
+  altre parole, \(\neg P\) è vero quando \(P\) è falso.
+\item
+  \textbf{Coimplicazione (\(P \iff Q\))}:\\
+  La coimplicazione \(P \iff Q\) è vera se \textbf{\(P\) implica \(Q\)}
+  e \textbf{\(Q\) implica \(P\)}
+  (\(P \Rightarrow Q \land Q \Rightarrow P\)). In altre parole, \(P\) e
+  \(Q\) devono essere veri nelle stesse situazioni.
+\item
+  \textbf{Quantificazione Universale (\(\forall x.P\))}:\\
+  La formula \(\forall x.P\) afferma che la proposizione \(P\) è vera
+  per \textbf{ogni possibile valore di \(x\)}. Se \(P\) è vera per tutti
+  i valori di \(x\), allora \(\forall x.P\) è vero.
+\item
+  \textbf{Quantificazione Esistenziale (\(\exists x.P\))}:\\
+  La formula \(\exists x.P\) afferma che \textbf{esiste almeno un valore
+  di \(x\)} per cui \(P\) è vera. Se \(P\) è vera per almeno un valore
+  di \(x\), allora \(\exists x.P\) è vero.
+\end{itemize}
+
+\hypertarget{connettivi-e-quantificatori}{%
+\subsubsection{Connettivi e
+Quantificatori}\label{connettivi-e-quantificatori}}
+
+\begin{itemize}
+\item
+  \textbf{Connettivi Logici}:\\
+  Un connettivo logico costruisce una nuova proposizione a partire da
+  proposizioni già esistenti. La \textbf{arietà} di un connettivo è
+  determinata dal numero di proposizioni che prende come input per
+  formare una nuova proposizione.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{0-ari}:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \textbf{\(\bot\) (Falso)} e \textbf{\(\top\) (Vero)} sono
+      connettivi \textbf{0-ari}, perché non prendono nessuna
+      proposizione come input, ma sono sempre veri o sempre falsi.
+    \end{itemize}
+  \item
+    \textbf{Unari}:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \textbf{\(\neg\) (Negazione)} è un connettivo \textbf{unario},
+      perché prende una sola proposizione come input per formare la
+      nuova proposizione.
+    \end{itemize}
+  \item
+    \textbf{Binari}:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \textbf{\(\land\) (Congiunzione)}, \textbf{\(\lor\)
+      (Disgiunzione)}, \textbf{\(\Rightarrow\) (Implicazione)} e
+      \textbf{\(\iff\) (Coimplicazione)} sono connettivi
+      \textbf{binari}, perché prendono \textbf{due proposizioni} come
+      input per formare una nuova proposizione.
+    \end{itemize}
+  \end{itemize}
+\item
+  \textbf{Quantificatori}:\\
+  I quantificatori \(\forall\) e \(\exists\) non sono connettivi logici,
+  ma \textbf{quantificatori}. Essi agiscono sulla proposizione nel loro
+  ambito e si riferiscono a variabili.
+\end{itemize}
+
+\hypertarget{precedenza-e-associativituxe0-dei-connettivi}{%
+\subsubsection{Precedenza e Associatività dei
+Connettivi}\label{precedenza-e-associativituxe0-dei-connettivi}}
+
+Per ridurre il numero di parentesi nelle formule, si seguono delle
+regole di \textbf{precedenza} e \textbf{associatività} per i connettivi
+logici:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Ordine di Precedenza}:\\
+  La precedenza dei connettivi logici, che determina l'ordine con cui
+  vengono applicati, è la seguente (dal più alto al più basso):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{\(\neg\) (Negazione)}\\
+  \item
+    \textbf{\(\land\) (Congiunzione)}\\
+  \item
+    \textbf{\(\lor\) (Disgiunzione)}\\
+  \item
+    \textbf{\(\Rightarrow\) (Implicazione)} e \textbf{\(\iff\)
+    (Coimplicazione)}
+  \end{itemize}
+\item
+  \textbf{Associatività}: I connettivi \(\land\), \(\lor\),
+  \(\Rightarrow\), e \(\iff\) sono \textbf{associativi a destra}, il che
+  significa che quando ci sono più connettivi dello stesso tipo, vengono
+  raggruppati da destra a sinistra.
+\end{itemize}
+
+\begin{examplebox}[Esempio]
+
+Consideriamo l'espressione: \[
+    A \land \neg B \lor C \Rightarrow D \Rightarrow B \lor C \lor E
+    \] Questa formula può essere letta come:\\
+\[((A \land (\neg B)) \lor C) \Rightarrow (D \Rightarrow (B \lor (C \lor E)))\]
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\newpage
+
+\hypertarget{teoria-degli-insiemi}{%
+\section{Teoria degli insiemi}\label{teoria-degli-insiemi}}
+
+La matematica si fonda su entità che possiedono determinate proprietà,
+le quali sono basate su \textbf{assunzioni iniziali}. È fondamentale che
+queste assunzioni siano \textbf{consistenti} tra di loro, ossia che non
+portino a contraddizioni. Inoltre, è necessario scegliere un
+\textbf{insieme ristretto di entità} che siano in grado di descrivere
+tutte le altre entità, in modo da costruire una base solida per la
+teoria matematica.
+
+Alla fine del XIX secolo, la \textbf{teoria degli insiemi} emerge come
+fondamento della matematica. Tuttavia, poco dopo, sorgono problemi, in
+quanto si scopre che questa teoria presenta delle
+\textbf{inconsistenze}. Per questo motivo, la logica torna a essere una
+disciplina centrale, proponendo nuovi fondamenti per la matematica.
+
+Nonostante ciò, la teoria degli insiemi resta il fondamento matematico
+più utilizzato, anche se non è l'unico possibile. Secondo questa teoria,
+tutto può essere visto come un insieme, e gli insiemi stessi possono
+contenere altri insiemi, senza che vi sia altro. Questa visione è
+estremamente efficace nel descrivere entità matematiche come insiemi e
+consente di trattare concetti complessi, come quelli legati agli
+infiniti.\\
+Tuttavia, dal punto di vista informatico, la teoria degli insiemi
+risulta essere poco adatta e inefficiente, presentando diversi svantaggi
+pratici.
+
+\hypertarget{teoria-degli-insiemi-naive}{%
+\subsection{Teoria degli insiemi
+naive}\label{teoria-degli-insiemi-naive}}
+
+La \textbf{teoria degli insiemi naive}, formalizzata da Georg Cantor, si
+basa sull'idea che un insieme sia una \textbf{collezione di oggetti}
+definita in qualunque modo sembri ragionevole farlo. In questa visione,
+un insieme può contenere qualsiasi tipo di elemento, senza alcuna
+necessità che questi siano omogenei tra loro. Un insieme viene definito
+come la \textbf{collezione di tutti gli elementi che condividono una
+stessa proprietà} \(P\), ad esempio \(A = \{ X \mid P(X) \}\). Gli unici
+predicati di base utilizzati in questa teoria sono
+\textbf{l'appartenenza} (simbolo \(\in\)) e \textbf{l'uguaglianza}
+(simbolo \(=\)).
+
+Nella teoria degli insiemi naive, un insieme viene visto come una
+\textbf{scatola}: quando ``apriamo'' una scatola, vediamo gli elementi
+che contiene, ma non possiamo vedere gli elementi dentro l'insieme di
+partenza. Inoltre, in questa teoria, l'ordine e le ripetizioni degli
+elementi non sono rilevanti quando si considera l'uguaglianza tra
+insiemi.
+
+Tuttavia, la teoria degli insiemi naive si rivela \textbf{inconsistente}
+a causa del famoso \textbf{paradosso di Russell}. Questo paradosso si
+può enunciare come segue: \[
+X = \{ Y \mid Y \notin Y \}
+\] Da questa definizione, si deduce che \(X \in X\) se e solo se
+\(X \notin X\), il che porta a una contraddizione logica, perché non può
+essere vero che \(X\) appartenga a se stesso e allo stesso tempo non gli
+appartenga. Questo paradosso dimostra che la teoria naive degli insiemi
+porta a \textbf{inconsistenza logica}, e perciò si fonda su una base
+falsa.
+
+Nonostante il paradosso, la teoria degli insiemi rimane estremamente
+utile in matematica, e quindi i matematici si sono impegnati a trovare
+un modo per \textbf{``salvare''} la teoria. Una possibile soluzione
+consiste nel \textbf{modificare} l'idea di ``insieme'' stessa,
+eliminando l'\textbf{assunzione di comprensione}. In particolare, non
+tutte le collezioni di elementi possono essere considerate insiemi.
+Alcune collezioni, che non rispettano le regole di questa nuova teoria,
+vengono chiamate \textbf{classi}. Nel caso del paradosso di Russell,
+\(X\) non sarebbe un insieme, ma una classe, che può essere descritta
+come ``la classe degli insiemi che non appartengono a se stessi''. Di
+conseguenza, la dichiarazione che \(X \in X\) è falsa, perché \(X\) non
+è un insieme ma una classe, e quindi non può appartenere a se stessa.
+
+\hypertarget{teorie-assiomatiche-degli-insiemi}{%
+\subsection{Teorie assiomatiche degli
+insiemi}\label{teorie-assiomatiche-degli-insiemi}}
+
+Esistono varie teorie assiomatiche degli insiemi che condividono alcuni
+aspetti fondamentali:
+
+\begin{itemize}
+\item
+  ci sono \textbf{concetti primitivi} che non vengono definiti (come
+  nella geometria euclidea), perché sarebbe impossibile definire tutto
+  (senza andare all'infinito)
+\item
+  in particolare i concetti primitivi di partenza sono:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{insieme}
+  \item
+    \textbf{appartenenza}
+  \item
+    \textbf{uguaglianza}
+  \end{itemize}
+\item
+  si usano \textbf{assiomi}: asseriscono l'esistenza di alcuni insiemi a
+  partire dall'esistenza di altri
+\end{itemize}
+
+Le varie teorie insiemistiche differiscono principalmente riguardo al
+set di assiomi utilizzati.\\
+Una delle più famose/utilizzate è quella di \textbf{Zermelo-Fraenkel
+(ZF}) in quanto è la meno controversa. Bisogna però ricordare che ZF non
+è mai stata dimostrata \textbf{consistente}, ovvero non è dimostrato che
+non contenga paradossi. Fino ad ora però non ne sono mai stati trovati.
+
+\hypertarget{teoria-di-zermelo-fraenkel-zf}{%
+\subsection{Teoria di Zermelo-Fraenkel
+(ZF)}\label{teoria-di-zermelo-fraenkel-zf}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Assioma} → un'ipotesi che assumiamo → siamo interessati solo
+  ai casi in cui vale
+\item
+  \textbf{Definizione} → una definizione è un' \textbf{abbreviazione} →
+  non stiamo ipotizzando nulla di nuovo
+\end{itemize}
+
+\hypertarget{assioma-di-estensionalituxe0}{%
+\subsubsection{Assioma di
+Estensionalità}\label{assioma-di-estensionalituxe0}}
+
+L'\textbf{Assioma di Estensionalità} afferma che due insiemi sono uguali
+se e solo se hanno gli stessi elementi:
+
+\[
+\forall X, \forall Y, \ (X = Y \iff \forall Z \ (Z \in X \iff Z \in Y))
+\]
+
+Due insiemi \(X\) e \(Y\) sono uguali se, per ogni elemento \(Z\), \(Z\)
+appartiene a \(X\) se e solo se appartiene anche a \(Y\). In altre
+parole, gli insiemi sono uguali se contengono esattamente gli stessi
+elementi.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{definizione-di-sottoinsieme}{%
+\subsubsection{Definizione di
+Sottoinsieme}\label{definizione-di-sottoinsieme}}
+
+Un insieme \(X\) è un sottoinsieme di un insieme \(Y\) se e solo se ogni
+elemento di \(X\) è anche un elemento di \(Y\):
+
+\[
+X \subseteq Y \overset{\mathrm{def}}{=} \forall Z \ (Z \in X \Rightarrow Z \in Y)
+\]
+
+L'insieme \(X\) è un sottoinsieme di \(Y\) se per ogni elemento \(Z\),
+se \(Z\) è un elemento di \(X\), allora \(Z\) è anche un elemento di
+\(Y\). Questo significa che tutti gli elementi di \(X\) sono contenuti
+in \(Y\).
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{assioma-di-separazione}{%
+\subsubsection{Assioma di separazione}\label{assioma-di-separazione}}
+
+L'\textbf{Assioma di separazione} afferma che dato un insieme \(X\),
+possiamo formare un sottoinsieme \(Y\) contenente gli elementi di \(X\)
+che soddisfano una certa proprietà \(P\):
+
+\[
+\forall X, \exists Y, \forall Z, (Z \in Y \iff Z \in X \land P(Z))
+\]
+
+Possiamo anche scrivere \(Y\) come:
+
+\[
+Y = \{ Z \in X \mid P(Z) \}
+\]
+
+Questo significa che, dato un insieme \(X\) e una proprietà \(P\),
+esiste un insieme \(Y\) che contiene esattamente quegli elementi di
+\(X\) che soddisfano \(P\). Possiamo quindi riscrivere l'assioma come:
+
+\[
+\forall X, \forall Z, (Z \in \{W \in X\mid P(W) \} \iff Z \in X \land P(Z))
+\]
+
+Per utilizzare l'\textbf{Assioma di separazione} al fine di riprodurre
+il \textbf{paradosso di Russell}, avremmo bisogno di un insieme \(U\)
+che contenga tutti gli altri insiemi. Ad esempio, consideriamo l'insieme
+\(X\) definito come:
+
+\[
+X = \{ Y \in U \mid Y \notin Y \}
+\]
+
+Tuttavia, nessun assioma della teoria degli insiemi \textbf{ZF} afferma
+che un tale insieme \textbf{U} esista. La collezione di tutti gli
+insiemi, infatti, non è un insieme, ma è una \textbf{classe propria}. In
+ZF, tutto ciò che non è un insieme è considerato una \textbf{classe}, e
+le classi proprie non sono trattate come insiemi. Quindi non ricadiamo
+nel \textbf{paradosso di Russel}.
+
+A differenza dell'\textbf{assioma di comprensione}, che non partiva da
+nessun insieme preesistente, l'\textbf{assioma di separazione}
+presuppone già l'esistenza di un insieme da cui creare un sottoinsieme
+con una proprietà specifica.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{assioma-dellinsieme-vuoto}{%
+\subsubsection{Assioma dell'insieme
+vuoto}\label{assioma-dellinsieme-vuoto}}
+
+L'\textbf{Assioma dell'insieme vuoto} afferma che esiste un insieme che
+non contiene alcun elemento. Formalmente, possiamo scrivere:
+
+\[
+\exists X, \forall Z, Z \notin X
+\]
+
+Questo significa che esiste un insieme \(X\) tale che nessun elemento
+\(Z\) appartiene a \(X\). Questo insieme viene indicato come l'insieme
+vuoto, denotato \(\emptyset\) L'assioma può quindi essere riscritto
+come:
+
+\[
+\forall Z, Z \notin \emptyset
+\]
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{definizione-dellinsieme-vuoto}{%
+\subsubsection{Definizione dell'insieme
+vuoto}\label{definizione-dellinsieme-vuoto}}
+
+Una volta che abbiamo definito cosa significa un insieme in generale,
+possiamo usare l'\textbf{Assioma di separazione} per definire l'insieme
+vuoto. In particolare, l'insieme vuoto può essere definito come un
+sottoinsieme di un insieme arbitrario \(Y\), in cui la proprietà che
+definisce gli elementi è sempre \textbf{falsa}:
+
+\[
+\emptyset \overset{\mathrm{def}}{=} \{ X \in Y \mid \text{false} \}
+\]
+
+La definizione dell'insieme vuoto è quindi il sottoinsieme di \(Y\) che
+contiene solo gli elementi che soddisfano la condizione falsa. In
+termini formali:
+
+\[
+Z \in \{ X \in Y \mid \text{false} \} \iff Z \in Y \land \text{false} \iff \text{false}
+\]
+
+Da questa equivalenza, risulta che nessun elemento \(Z\) può appartenere
+all'insieme vuoto, poiché la condizione è sempre falsa. In altre parole,
+\textbf{per ogni \(Z\), \(Z\) non appartiene a \(\emptyset\)}, il che è
+esattamente ciò che afferma l'\textbf{Assioma dell'insieme vuoto}.
+(L'assioma sarà ridondante)
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{definizione-e-teorema-di-intersezione-binaria}{%
+\subsubsection{Definizione e teorema di intersezione
+binaria}\label{definizione-e-teorema-di-intersezione-binaria}}
+
+L'\textbf{intersezione} di due insiemi \(A\) e \(B\) è l'insieme formato
+da tutti gli elementi che appartengono sia ad \(A\) che a \(B\):
+
+\[
+A \cap B \overset{\mathrm{def}}{=} \{ X \in A \mid X \in B \}
+\]
+
+Possiamo inoltre affermare che:
+
+\[
+X \in A \cap B \iff (X \in A \land X \in B)
+\]
+
+Questo è il \textbf{teorema dell'intersezione binaria}, la cui
+dimostrazione è ovvia per l'\textbf{assioma di separazione} e la
+\textbf{definizione di intersezione binaria}.
+
+È possibile estendere il concetto di intersezione binaria a un numero
+\textbf{finito} di insiemi:
+
+\[
+A_1 \cap A_2 \cap \dots \cap A_n = (\dots((A_1 \cap A_2) \cap A_3)\dots \cap A_n)
+\]
+
+Questa è detta \textbf{intersezione n-aria} ed è definita \textbf{per
+ricorsione} a partire dall'intersezione binaria. Tuttavia non è
+possibile, in logica formale, definire, \textbf{tramite l'intersezione
+binaria}, un'intersezione di \textbf{infiniti insiemi} con una sola
+formula, perché una formula logica è sempre \textbf{finita}. Scritture
+informali del tipo:
+
+\[
+A_1 \cap A_2 \cap A_3 \cap \dots
+\]
+
+non hanno significato logico rigoroso, poiché i simboli ``\ldots{}'' non
+rappresentano un'entità formale.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{definizione-di-intersezione}{%
+\subsubsection{Definizione di
+intersezione}\label{definizione-di-intersezione}}
+
+Quando si vuole intersecare \textbf{un numero arbitrario di insiemi},
+(anche potenzialmente infinito), si procede raccogliendo tutti gli
+insiemi da intersecare in un \textbf{insieme di insiemi}, che indichiamo
+con \(F\).\\
+In questo modo, possiamo definire l'intersezione di tutti gli insiemi
+appartenenti a \(F\).
+
+Non esiste però un \textbf{elemento neutro} per l'operazione di
+intersezione.\\
+Infatti, l'insieme che dovrebbe fungere da elemento neutro sarebbe
+l'insieme ``universale'' contenente tutti gli insiemi --- ma un tale
+oggetto non esiste come insieme, bensì come \textbf{classe propria}
+(troppo grande per essere un insieme). Per questo motivo, si adotta la
+seguente convenzione:
+
+\[
+\bigcap F \;\overset{\mathrm{def}}{=} \varnothing \quad \text{se} \; F = \varnothing
+\]
+
+ovvero, l'intersezione dell'insieme vuoto di insiemi è definita come
+l'insieme vuoto.
+
+In generale, dato un insieme \(F\) i cui elementi sono insiemi, si
+definisce la \textbf{loro intersezione} come:
+
+\[
+\bigcap F \; \overset{\mathrm{def}}{=} \begin{cases} \varnothing & \text{se } F = \varnothing \\ \{\, X \in A \mid \forall Y, (Y \in F \Rightarrow X \in Y) \,\} & \text{se } F \neq \varnothing \end{cases}
+\]
+
+dove \(A \in F\) è un qualunque elemento di \(F\).\\
+La definizione \textbf{non dipende dalla scelta di \(A\)}.
+
+Detto \(F\) l'insieme (eventualmente infinito) di tutti gli insiemi da
+intersecare, l'\textbf{insieme intersezione} \(Y\) di tutti quelli si
+può anche scrivere:
+
+\[
+\bigcap F = \bigcap_{Y \in F} Y
+\]
+
+che si legge ``\textbf{intersezione di tutti gli insiemi \(Y\)
+appartenenti a \(F\)}''.
+
+\begin{examplebox}[Esempio informale]
+
+Se \(F = \{ \,A,\, B\, ,C\, \}\), allora:
+\(\bigcap_{Y \in \{A, B, C\}} Y = A \cap B \cap C\)
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{assioma-dellunione}{%
+\subsubsection{Assioma dell'unione}\label{assioma-dellunione}}
+
+L'\textbf{unione} è un'operazione potenzialmente ``pericolosa'' dal
+punto di vista assiomatico, perché permette di ``raccogliere'' in un
+unico insieme tutti gli elementi appartenenti ad altri insiemi.\\
+Per garantire che tale operazione produca effettivamente un
+\textbf{insieme ben definito}, si introduce l'\textbf{assioma
+dell'unione}.
+
+Dato un insieme \(F\) i cui elementi sono a loro volta insiemi, esiste
+un insieme che contiene \textbf{tutti e soli} gli elementi appartenenti
+ad almeno uno degli insiemi di \(F\). In altre parole, possiamo
+definire:
+
+\[
+\forall F, \exists X, \forall Z, \, \big( Z \in X \;\;\Longleftrightarrow\;\; \exists Y, \, (Y \in F \land Z \in Y) \big)
+\]
+
+L'insieme \(X\) garantito da questo assioma si chiama \textbf{unione di
+\(F\)} e si indica con:
+
+\[
+\bigcup F \quad \text{o anche} \quad \bigcup_{Y \in F} Y
+\]
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{unione-binaria-teorema}{%
+\subsubsection{Unione binaria (teorema)}\label{unione-binaria-teorema}}
+
+Il teorema dell'\textbf{unione binaria} afferma che, dati due insiemi
+\(A\) e \(B\), \textbf{esiste sempre} un insieme \(X\) i cui elementi
+sono \textbf{tutti e soli} gli elementi appartenenti ad almeno uno dei
+due insiemi:
+
+\[
+\forall A, \forall B, \exists X, \forall Z, \, \big( Z \in X \;\Longleftrightarrow\; Z \in A \lor Z \in B \big)
+\]
+
+Questo insieme \(X\) si chiama \textbf{unione binaria} di \(A\) e \(B\).
+
+Per il momento non è dimostrabile, infatti non è ancora possibile
+dimostrare per ogni \(A\) e \(B\) l'esistenza di un insieme che contiene
+\textbf{solo \(A\) e \(B\)}.
+
+Scrivendo \(X\) come \(A\cup B\), possiamo esprimere il teorema nella
+forma più usuale:
+
+\[
+\forall A, \forall B, \forall Z, \, (Z \in A \cup B \;\Longleftrightarrow\; Z \in A \lor Z \in B)
+\]
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{assioma-del-singoletto}{%
+\subsubsection{Assioma del singoletto}\label{assioma-del-singoletto}}
+
+L'\textbf{Assioma del Singoletto} garantisce l'esistenza di un insieme
+di un solo elemento, in particolare dice che: \[
+\forall X, \exists Y, \forall Z, (Z \in Y \iff Z = X)
+\] Indicando l'insieme \(Y\) come \(\{X\}\) (ovvero quell'insieme che
+contiene solo \(X\)), è possibile riscrivere l'assioma come: \[
+\forall X, \forall Z, (Z \in \{X\} \iff Z = X)
+\]
+
+Anche questo assioma \textbf{è in realtà ridondante}, in quanto si potrà
+dimostrare in seguito a partire dall'assioma di rimpiazzamento.
+
+Aggiungendo questo assioma possiamo introdurre anche un ``abuso'' di
+notazione, ovvero possiamo indicare con \(\{A_1, \dots , A_n\}\)
+l'insieme \(\{A_1\} \, \cup \dots \cup \, \{A_n\}\), che esiste in virtù
+degli assiomi del singoletto e dell'unione: \[
+X \in \{A_1, \dots , A_n\} \iff X = A_1 \lor \dots \lor X = A_n
+\]
+
+A partire da questo assioma è possibile ora formare nuovi tipi di
+insiemi (in quanto fin ora l'unico insieme di cui era garantita
+l'esistenza era l'insieme vuoto):
+
+\begin{itemize}
+\tightlist
+\item
+  Un insieme che contiene solo l'insieme vuoto (singoletto del vuoto):
+  \(\{\emptyset\}\)
+\item
+  Un insieme che contiene solo il singoletto del vuoto:
+  \(\{\{\emptyset\}\}\)
+\item
+  E così via\ldots{}
+\end{itemize}
+
+Usando poi l'unione posso creare altri insiemi ancora:
+
+\begin{itemize}
+\tightlist
+\item
+  Un inseme ottenuto dall'unione dell'insieme vuoto e del singoletto del
+  singoletto del vuoto: \(\{\emptyset , \{\emptyset\}\}\)
+\item
+  Un inseme ottenuto dall'unione del singoletto del vuoto e del
+  singoletto del singoletto del vuoto:
+  \(\{\{\emptyset\} , \{\{\emptyset\}\}\}\)\\
+\item
+  E così via
+\end{itemize}
+
+Notiamo quindi come è possibile formare \textbf{un'infinità} di insiemi,
+per ora però \textbf{tutti finiti}.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{costruzione-dei-numeri-naturali}{%
+\subsubsection{Costruzione dei numeri
+naturali}\label{costruzione-dei-numeri-naturali}}
+
+Per ``costruire'' i numeri naturali, dobbiamo prima introdurre il
+concetto di numero. Tuttavia, non possiamo farlo direttamente con questa
+logica, quindi dobbiamo ricorrere alla \textbf{meta-logica}, utilizzando
+il concetto di \textbf{meta-numero naturale}.\\
+Indicheremo l'utilizzo della meta-logica con le parentesi quadre doppie
+\([[\), per differenziarlo dalla logica formale.
+
+\begin{itemize}
+\tightlist
+\item
+  Lo \textbf{zero} è rappresentato dall'insieme vuoto: \[
+  [[0]] \overset{\mathrm{def}}{=} \emptyset
+  \]
+\item
+  Il successore di un numero naturale \(n\) (cioè \(n+1\)) è
+  rappresentato dall'insieme che contiene tutti gli elementi di \(n\) e
+  in più il singoletto di \(n\): \[
+   [[n+1]] \overset{\mathrm{def}}{=} [[n]] \cup \{[[n]]\}
+  \]
+\item
+  Denoteremo questi insiemi con la notazione di numeri naturali: \[
+  \begin{aligned}
+  \,[[0]] & = \emptyset && = 0 \\[4pt]
+  \,[[1]] & = \{\emptyset\} && = 1 \\[4pt]
+  \,[[2]] & = \{\emptyset, \{\emptyset\}\} && = 2 \\[4pt]
+  \,[[3]] & = \{\emptyset, \{\emptyset\}\, \{\emptyset, \{\emptyset\}\} && = 3 \\[4pt]
+  \end{aligned}
+  \]
+\end{itemize}
+
+Questa costruzione ci permette di rappresentare i numeri naturali come
+insiemi, dove ogni insieme contiene tutti gli insiemi precedenti. In
+particolare è una rappresentazione ``comoda'', in quanto possiamo
+definire facilmente alcune operazioni sui numeri naturali.
+
+\begin{examplebox}[Esempi di definizioni]
+
+\begin{itemize}
+\tightlist
+\item
+  La relazione di ordine \(\leq\) tra numeri naturali è definita come:
+  \[
+  n \leq m := n \in m \; (\text{ o anche } n \subseteq m)
+  \]
+\item
+  Il massimo tra due numeri naturali \(n\) e \(m\) è definito come: \[
+  max\{n, m\} := n \cup m
+  \]
+\item
+  Il minimo tra due numeri naturali \(n\) e \(m\) è definito come: \[
+  min\{n, m\} := n \cap m
+  \]
+\end{itemize}
+
+\end{examplebox}
+
+Sarà poi necessario dimostrare che questi numeri naturali, così
+definiti, siano effettivamente tutti diversi. Per il momento ci
+limitiamo a dimostrare che presi due numeri naturali distinti essi sono
+diversi.
+
+\begin{examplebox}[Dimostrazione che due numeri sono diversi]
+
+Se vogliamo per esempio dimostrare che \(1 \not = 2\) procederemo
+così:\\
+\emph{Supponiamo che \(1 = 2\).}\\
+\emph{Quindi per \textbf{l'assioma di estensionalità} dimostriamo che
+\(\forall Z, Z \in 1 \iff Z \in 2\). (\(H_1\)).}\\
+\emph{Per \textbf{l'assioma dell'unione}, l'\textbf{assioma del
+singoletto} e la \textbf{costruzione dei numeri naturali} dimostriamo
+che \(1 \in 2\).}\\
+\emph{Quindi per \(H_1\) dimostriamo che \(1\in1\).}\\
+\emph{Quindi per la \textbf{costruzione dei numeri naturali} e per
+l'\textbf{assioma del singoletto} dimostriamo che \(\{\emptyset\} = 1\)
+e \(1 = \emptyset\).}\\
+\emph{Quindi per l'\textbf{assioma di estensionalità} e per la
+\textbf{transitività dell'uguaglianza} dimostriamo che
+\(\forall Z, Z \in \{\emptyset\} \iff Z \in \emptyset\).}\\
+\emph{Quindi, poiché \(\emptyset \in \{\emptyset\}\) per
+l'\textbf{assioma del singoletto}, dimostriamo che
+\(\emptyset \in \emptyset\).}\\
+\emph{Quindi abbiamo un assurdo per l'\textbf{assioma del vuoto}.}\\
+\emph{Quindi \(1\not = 2\).}\\
+\textbf{\emph{Qed.}}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{assioma-dellinfinito}{%
+\subsubsection{Assioma dell'infinito}\label{assioma-dellinfinito}}
+
+L'\textbf{assioma dell'infinito} afferma che esiste un insieme che
+contiene almeno tutti (gli encoding de) i numeri naturali: \[
+\exists Y, (\emptyset \in Y \land \forall N, (N \in Y \Rightarrow N \cup \{N\} \in Y))
+\] Indicheremo temporaneamente con \(\mathcal{N}\) tale insieme.
+
+Più avanti, quando capiremo cos'è l'infinito, sarà possibile dimostrare
+che questo è l'unico insieme infinito visto fin ora, e che è proprio
+grazie a questo insieme/assioma che esistono gli insiemi infiniti
+(costruiti a partire da questo).
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{teorema-dellesistenza-di-mathbbn}{%
+\subsubsection{\texorpdfstring{Teorema dell'esistenza di
+\(\mathbb{N}\)}{Teorema dell'esistenza di \textbackslash mathbb\{N\}}}\label{teorema-dellesistenza-di-mathbbn}}
+
+Combinando l'assioma dell'infinito e altri non ancora visti si arriva a
+dimostrare l'esistenza di \(\mathbb{N}\), che contiene tutti e solo gli
+encoding dei numeri naturali.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{assioma-dellinsieme-potenza}{%
+\subsubsection{Assioma dell'insieme
+potenza}\label{assioma-dellinsieme-potenza}}
+
+L'\textbf{assioma dell'insieme potenza} afferma che esiste
+l'\textbf{insieme dei sottoinsiemi} di un insieme dato: \[
+\forall X, \exists Y, \forall Z, (Z \in Y \iff Z \subseteq X)
+\] Indicheremo \(Y\) come \(2^x\) (\textbf{insieme potenza}) oppure come
+\(\mathcal{P}(X)\) (\textbf{insieme delle parti}).
+
+\begin{examplebox}[Esempio]
+
+\[
+2^{\{1, 2\}} = \{\emptyset , \{1\}, \{2\}, \{1, 2\}\}
+\]
+
+\end{examplebox}
+
+È importante notare come, su insiemi finiti, sarebbe comunque possibile
+costruire il relativo insieme delle parti; il problema si presenterebbe
+invece per gli insiemi infiniti (come per \(\mathbb{N}\)). Questo
+assioma invece garantisce l'esistenza dell'insieme delle parti anche per
+gli insiemi infiniti.\\
+Questo sarà ad esempio fondamentale nella costruzione dei numeri reali
+(a partire dall'insieme delle parti di \(\mathbb{N}\)).
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{assioma-di-regolarituxe0-o-di-fondazione}{%
+\subsubsection{Assioma di regolarità (o di
+fondazione)}\label{assioma-di-regolarituxe0-o-di-fondazione}}
+
+Se un insieme è non vuoto ha almeno un elemento con il quale è
+\textbf{disgiunto} (non ha un'intersezione).
+
+In pratica assicura che gli insiemi possano contenere solo cose ``più
+piccole'' e non possono quindi contenere sé stessi (ricorsivamente).\\
+Come conseguenza di questo ha quindi senso cercare di misurare e
+definire la cardinalità (taglia) di un insieme.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{assioma-di-rimpiazzamento}{%
+\subsubsection{Assioma di
+rimpiazzamento}\label{assioma-di-rimpiazzamento}}
+
+Intuitivamente l'\textbf{assioma di rimpiazzamento} afferma che
+l'immagine di un insieme rispetto a una formula che descrive una
+funzione è ancora un insieme.\\
+Ovvero, sempre intuitivamente: se \(A\) è un insieme, quindi è
+abbastanza piccolo, e a ogni elemento ne associo un altro, in una
+relazione molti-a-uno, quello che ottengo come immagine è ancora piccolo
+(un insieme).
+
+\newpage
+
+\hypertarget{regole-di-dimostrazione}{%
+\section{Regole di dimostrazione}\label{regole-di-dimostrazione}}
+
+\begin{itemize}
+\item
+  \textbf{Enunciato}: ciò che volgiamo dimostrare, costituito da un
+  insieme di ipotesi e da una conclusione
+\item
+  Tutti gli assiomi possono essere sempre usati come ipotesi (sono
+  ipotesi universali)
+\item
+  Procediamo nella dimostrazione in due modi, seguendo le regole di
+  introduzione ed eliminazione:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Introduzione}: il connettivo non è presente nelle premesse,
+    ma appare nella conclusione, procediamo quindi manipolando la
+    conclusione
+  \item
+    \textbf{Eliminazione}: il connettivo è presente in una delle
+    premesse (ipotesi o risultato intermedio), ma scompare nella
+    conclusione; procediamo quindi manipolando le premesse/ipotesi
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{forall-introduzione}{%
+\subsection{\texorpdfstring{\(\forall\)-Introduzione}{\textbackslash forall-Introduzione}}\label{forall-introduzione}}
+
+La regola di \textbf{\(\forall\)-Introduzione} afferma che per
+dimostrare una proposizione che coinvolge un quantificatore universale
+\(\forall x.P(x)\) (ovvero, ``per ogni \(x\), vale \(P(x)\)''), bisogna
+assumere un \(x\) arbitrario (\textbf{insieme fissato}) e dimostrare che
+\(P(x)\) è vero per tale \(x\). Per insieme fissato si intende un
+insieme generico, di cui non si cambierà nulla e non si assumerà nulla:
+se si dimostra qualcosa per un x fissato, vuol dire che si può ripetere
+la dimostrazione per qualunque altro \(x'\).
+
+\begin{examplebox}[Esempio]
+
+\emph{``Sia \(X\) (un insieme) fissato; \ldots{}''}\\
+(i ``\ldots{}'' rappresentano la prova di \(P(X)\).)
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+assume X: set
+-- prova che P(x) è vero per questo x
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{forall-eliminazione}{%
+\subsection{\texorpdfstring{\(\forall\)-Eliminazione}{\textbackslash forall-Eliminazione}}\label{forall-eliminazione}}
+
+La regola di \textbf{\(\forall\)-Eliminazione} permette di concludere
+che \(P(x)\) è vero per un valore qualunque di \(x\), poiché sappiamo
+che \(\forall x.P(x)\) è vero per ogni \(x\). Da un'ipotesi che afferma
+\(\forall x.P(x)\), possiamo concludere che \(P(a)\) è vero per un
+valore specifico \(a\).
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+by NOME_IPOTESI we proved CONCLUSIONE as NOME_NUOVO_RISULTATO
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{rightarrow-introduzione}{%
+\subsection{\texorpdfstring{\(\Rightarrow\)-Introduzione}{\textbackslash Rightarrow-Introduzione}}\label{rightarrow-introduzione}}
+
+La regola di \textbf{\(\Rightarrow\)-Introduzione} afferma che per
+dimostrare una proposizione implicativa \(P \Rightarrow Q\) (ovvero,
+``se \(P\) allora \(Q\)''), bisogna assumere \(P\) come ipotesi e, dopo
+aver dimostrato che \(Q\) segue da \(P\), si conclude che
+\(P \Rightarrow Q\) è vero.
+
+\begin{examplebox}[Esempio]
+
+\emph{``Suppongo \(P\) (NOME\_IPOTESI); \ldots{}''}\\
+(i ``\ldots{}'' rappresentano la prova di \(Q\) partendo dall'ipotesi
+\(P\)).
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+suppose P as NOME_IPOTESI,
+-- prova che Q segue da P
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{rightarrow-eliminazione}{%
+\subsection{\texorpdfstring{\(\Rightarrow\)-Eliminazione}{\textbackslash Rightarrow-Eliminazione}}\label{rightarrow-eliminazione}}
+
+La regola di \textbf{\(\Rightarrow\)-Eliminazione} afferma che se
+sappiamo che \(P \Rightarrow Q\) (da un'ipotesi o da un risultato
+intermedio) e sappiamo che \(P\) è vero (da un'altra ipotesi o risultato
+intermedio), possiamo concludere che \(Q\) è vero.
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+"by NOME_IPO_PQ, NOME_IPO_P we proved Q as NOME_RISULTATO_INTERMEDIO"
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{rightarrow-eliminazione-variante}{%
+\subsection{\texorpdfstring{\(\Rightarrow\)-Eliminazione
+(variante)}{\textbackslash Rightarrow-Eliminazione (variante)}}\label{rightarrow-eliminazione-variante}}
+
+La regola di \textbf{\(\Rightarrow\)-Eliminazione} (variante) afferma
+che, dato un risultato intermedio o un'ipotesi del tipo
+\(P \Rightarrow Q\) (denominata \(H\)), se si vuole concludere \(Q\), si
+può procedere dicendo: ``per \(H\), per dimostrare \(Q\) mi posso
+ridurre a dimostrare \(P\)''. In altre parole, si sfrutta l'ipotesi
+\(H\) per ridurre la dimostrazione di \(Q\) alla dimostrazione di \(P\).
+
+\begin{examplebox}[Esempio]
+
+\emph{``Per \(H\), per dimostrare \(Q\), mi posso ridurre a dimostrare
+\(P\); \ldots{}''}\\
+(i ``\ldots{}'' rappresentano la prova di \(P\) che, una volta
+dimostrata, porterà alla conclusione di \(Q\)).
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+by H it suffices to prove P
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{iff-introduzione}{%
+\subsection{\texorpdfstring{\(\iff\)-Introduzione}{\textbackslash iff-Introduzione}}\label{iff-introduzione}}
+
+La regola di \textbf{\(\iff\)-Introduzione} afferma che per dimostrare
+una bicondizionale \(P \iff Q\) (ovvero, ``\(P\) se e solo se \(Q\)''),
+bisogna dimostrare entrambe le implicazioni: \(P \Rightarrow Q\) e
+\(Q \Rightarrow P\).\\
+Bisognerà quindi:\\
+1. Dimostrare \(P \Rightarrow Q\).\\
+2. Dimostrare \(Q \Rightarrow P\).
+
+\begin{examplebox}[Esempio]
+
+\emph{``Per dimostrare \(P \iff Q\), dimostriamo che \(P \Rightarrow Q\)
+e poi che \(Q \Rightarrow P\).''}
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+  we split the proof
+  . we need to prove P → Q
+    -- Dimostrazione
+  . we need to prove Q → P
+    -- Dimostrazione
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{iff-eliminazione}{%
+\subsection{\texorpdfstring{\(\iff\)-Eliminazione}{\textbackslash iff-Eliminazione}}\label{iff-eliminazione}}
+
+La regola di \textbf{\(\iff\)-Eliminazione} afferma che un'ipotesi
+\(P \iff Q\) può essere utilizzata sia come un'ipotesi
+\(P \Rightarrow Q\), che come un'ipotesi \(Q \Rightarrow P\), a seconda
+della necessità nella dimostrazione.
+
+\begin{examplebox}[Esempio]
+
+Ipotesi \(H\): \(P \iff Q\)\\
+\emph{``Per \(H\) dimostriamo \(P \Rightarrow Q\)''}\\
+Oppure\\
+\emph{``Per \(H\) dimostriamo \(Q \Rightarrow P\)''}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{abbreviazioni}{%
+\subsection{Abbreviazioni}\label{abbreviazioni}}
+
+\begin{itemize}
+\item
+  \textbf{Per ogni tale che}:\\
+  \emph{``Sia \(x\) (un insieme) fissato; suppongo \(P(x)\); \ldots{}''}
+  si può abbreviare con: \textbf{``sia \(x\) tale che \(P(x)\)''}.
+  Questa formula si usa per dimostrare
+  \(\forall x.\,(P(x) \Rightarrow Q(x))\).
+\item
+  \textbf{Da \(H_1, \dots, H_n\)}:\\
+  Se si ha un insieme di ipotesi \(H_1,\dots,H_n\), con ognuna della
+  forma
+  \(\forall\vec x.\,(Q_{i1}(\vec x) \Rightarrow \dots \Rightarrow Q_{in}(\vec x))\),
+  l'abbreviazione usata è: \emph{``Da \(H_1,\dots,H_n\) ho \(P(H)\)''}
+  .\\
+  Questa espressione indica l'applicazione di \textbf{un numero
+  arbitrario di regole di eliminazione}, partendo dalle ipotesi
+  \(H_1,\dots,H_n\), fino a giungere alla conclusione \(P\).
+
+  In Lean diventa:
+
+\begin{lstlisting}
+by H1, ..., Hn we proved P as H
+\end{lstlisting}
+\item
+  \textbf{Uso di ``quindi'' e sinonimi}:\\
+  ``\textbf{Quindi}'' e termini simili vengono usati come riferimenti
+  all'\textbf{ultima ipotesi} o risultato intermedio, anche senza citare
+  esplicitamente il nome.
+
+  In Lean:
+
+\begin{lstlisting}
+thus ...
+\end{lstlisting}
+\end{itemize}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{espansione-di-definizioni}{%
+\subsection{Espansione di definizioni}\label{espansione-di-definizioni}}
+
+Quando si espande una definizione, si usa l'espressione ``\(P\), ovvero
+\(Q\)'' per indicare che la proposizione \(P\) è equivalente a \(Q\).
+
+\begin{examplebox}[Esempio]
+
+Se abbiamo una definizione come \(A \subseteq B\), possiamo espanderla
+come \(\forall X\, (X \in A \Rightarrow X \in B)\)\\
+Diremo quindi:\\
+\emph{``\(A \subseteq B\) ovvero
+\(\forall X.\,(X \in A \Rightarrow X \in B)\).''}
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+A ⊆ B that is equivalent to ∀X, X ∈ A → X ∈ B
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{esplicitazione-della-conclusione}{%
+\subsection{Esplicitazione della
+conclusione}\label{esplicitazione-della-conclusione}}
+
+A volte si esplicita ciò che dobbiamo dimostrare → perché potrebbe
+cambiare nel corso della dimostrazione.
+
+\begin{examplebox}[Esempio]
+
+\emph{Dobbiamo dimostrare \(P\).}
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+we need to prove P
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{ovvio}{%
+\subsection{Ovvio}\label{ovvio}}
+
+``\textbf{Ovvio}'' si usa quando il lettore può ricostruire la prova per
+conto suo (ad esempio combinando le ipotesi elencate).
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+done
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{assurdo-eliminazione}{%
+\subsection{Assurdo-Eliminazione}\label{assurdo-eliminazione}}
+
+Dalle regole di eliminazione delle ipotesi possiamo ottenere il
+\textbf{bottom} (\(\bot\)) (altrimenti non sarebbe possibile
+dimostrarlo).\\
+Se siamo in un caso che non si verifica mai, allora possiamo concludere
+qualunque cosa: se abbiamo dimostrato l'\textbf{assurdo} possiamo
+dimostrare \textbf{qualsiasi proposizione}.
+
+\begin{examplebox}[Esempio]
+
+\emph{Per \ldots{} dimostro l'assurdo. Quindi {[}quello che voglio{]}.}
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+by ... we proved False
+thus ...
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{lnot-introduzione}{%
+\subsection{\texorpdfstring{\(\lnot\)-Introduzione}{\textbackslash lnot-Introduzione}}\label{lnot-introduzione}}
+
+\(\lnot P\) è un'abbreviazione di \(P \Rightarrow \bot\), quindi per
+dimostrare \(\lnot P\) \textbf{si assume \(P\) e si dimostra
+l'assurdo}.\\
+Importante: \textbf{Questa non è una dimostrazione per assurdo!}
+
+\begin{examplebox}[Esempio]
+
+\emph{Suppongo \(P\) (NOME\_IPOTESI); \ldots{}}\\
+(i ``\ldots{}'' rappresentano la prova dell'\textbf{assurdo}.)
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{lnot-eliminazione}{%
+\subsection{\texorpdfstring{\(\lnot\)-Eliminazione}{\textbackslash lnot-Eliminazione}}\label{lnot-eliminazione}}
+
+Se ho un'ipotesi \(\lnot P\) la posso combinare con un'altra ipotesi che
+afferma \(P\): si conclude così l'\textbf{assurdo}.
+
+\begin{examplebox}[Esempio]
+
+\begin{itemize}
+\tightlist
+\item
+  \(H_1\): \(P\)\\
+\item
+  \(H_2\): \(\lnot P\)\\
+  \emph{``Da \(H_1\) e \(H_2\) dimostro l'assurdo. Quindi, ovvio.''}
+\end{itemize}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{land-introduzione}{%
+\subsection{\texorpdfstring{\(\land\)-Introduzione}{\textbackslash land-Introduzione}}\label{land-introduzione}}
+
+La regola di \(\land\)\textbf{-Introduzione} ci permette di procedere in
+due modi per dimostrare \(P \land Q\):
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Spezzando la prova}: si dimostra prima \(P\) poi \(Q\).
+
+  \begin{examplebox}[Esempio]
+
+  \emph{``Per dimostrare \(P \land Q\), dimostriamo \(P\) e poi
+  \(Q\)''.}
+
+  \end{examplebox}
+
+  \begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+we split the proof
+. we need to prove P
+  -- Dimostrazione di P
+. we need to prove Q
+  -- Dimostrazione di Q
+\end{lstlisting}
+
+  \end{examplebox}
+\item
+  \textbf{Dalle prove già ottenute} di \(P\) e \(Q\): si conclude
+  direttamente \(P \land Q\).
+
+  \begin{examplebox}[Esempio]
+
+  \(H_1\): \(P\)\\
+  \(H_2\): \(Q\)\\
+  \emph{``Da \(H_1\), \(H_2\) dimostriamo \(P \land Q\).''}
+
+  \end{examplebox}
+\end{enumerate}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{land-eliminazione}{%
+\subsection{\texorpdfstring{\(\land\)-Eliminazione}{\textbackslash land-Eliminazione}}\label{land-eliminazione}}
+
+La regola di \textbf{\(\land\)-Eliminazione} ci permette, quando abbiamo
+un risultato intermedio in cui vale \(P \land Q\), di spezzare tale
+ipotesi in due ipotesi diverse:
+
+\begin{itemize}
+\tightlist
+\item
+  una per cui vale \(P\)
+\item
+  una per cui vale \(Q\)
+\end{itemize}
+
+In alternativa posso anche usare la stessa ipotesi \(P \land Q\) sia per
+concludere \(P\), che per concludere \(Q\).
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+by NOME_p_and_q we proved P as H1 and Q as H2
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{lor-introduzione}{%
+\subsection{\texorpdfstring{\(\lor\)-Introduzione}{\textbackslash lor-Introduzione}}\label{lor-introduzione}}
+
+La regola di \textbf{\(\lor\)-Introduzione} ci permette, quando dobbiamo
+dimostrare \(P \lor Q\), di ridurci a dimostrare o \(P\) o \(Q\),
+dichiarandolo.
+
+\begin{examplebox}[Esempio]
+
+\emph{``Dimostro P''} oppure \emph{``Dimostro Q''}
+
+\end{examplebox}
+
+Se ho già una dimostrazione di \(P\) o una di \(Q\), ho già dimostrato
+\(P \lor Q\)
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+by NOME_p we proved P ∨ Q
+\end{lstlisting}
+
+\end{examplebox}
+
+Può però capitare di trovarsi in un punto della dimostrazione in cui non
+si sa ancora se scegliere \(P\) o \(Q\): in tali casi bisogna aspettare.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{lor-eliminazione}{%
+\subsection{\texorpdfstring{\(\lor\)-Eliminazione}{\textbackslash lor-Eliminazione}}\label{lor-eliminazione}}
+
+Data un'ipotesi \(P \lor Q\), la regola di
+\textbf{\(\lor\)-Eliminazione} ci permette di spezzare la dimostrazione
+in \textbf{due casi}:
+
+\begin{itemize}
+\tightlist
+\item
+  i casi in cui vale \(P\).\\
+\item
+  i casi in cui vale \(Q\).
+\end{itemize}
+
+Bisogna quindi dimostrare per entrambi i casi. Ogni sotto dimostrazione
+avrà a disposizione un'ipotesi in più (ad esempio nel caso in cui valga
+\(P\), avrò l'ipotesi \(P\)).\\
+Le ipotesi di un caso non influenzano quelle dell'altro.
+
+\begin{examplebox}[Esempio]
+
+\emph{``Procedo per casi:}\\
+- \emph{Caso in cui valga P.\\
+Suppongo P (H). \ldots{}}\\
+- \emph{Caso in cui valga Q.\\
+Suppongo Q (H). \ldots{} ``}
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+  we proceed by cases on NOME_P_or_Q to prove CONCLUSIONE
+  . case or_introl
+    suppose P as H
+    ...
+  . case or_intror
+    suppose Q as H
+    ...
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{risultati-intermedi}{%
+\subsection{Risultati intermedi}\label{risultati-intermedi}}
+
+Possiamo usare risultati intermedi per concludere \textbf{nuovi
+risultati intermedi}, diversi dalla conclusione corrente. Combiniamo
+quindi varie ipotesi per ottenere una nuova ipotesi che potremo
+utilizzare.
+
+\begin{examplebox}[Esempio]
+
+\(H_1\): \(A\)\\
+\(H_2\): \(B\)\\
+\emph{``Per H1 e H2 si ha A \(\land\) B (H3)''}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{exists-introduzione}{%
+\subsection{\texorpdfstring{\(\exists\)-Introduzione}{\textbackslash exists-Introduzione}}\label{exists-introduzione}}
+
+\(\exists x.\,P(x)\) significa che \(P\) vale se esiste almeno un \(x\)
+per cui vale, quindi dimostro che vale per uno \textbf{specifico
+elemento} che scelgo. Il valore di \(x\) da scegliere non andrà preso a
+caso, ma dopo aver capito/visto quale sia il valore migliore per la
+dimostrazione. All'inizio potrà non essere chiaro quale, o proprio non
+esserci un valore concreto da poter scegliere.
+
+\begin{examplebox}[Esempio]
+
+``Scelgo \(E\) e dimostro \(P(E)\). \ldots{}''*
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+we choose E ...
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{exists-eliminazione}{%
+\subsection{\texorpdfstring{\(\exists\)-Eliminazione}{\textbackslash exists-Eliminazione}}\label{exists-eliminazione}}
+
+Applichiamo la regola di \textbf{\(\exists\)-Eliminazione} in quelle
+situazioni in cui \(\exists x.\,P(x)\) : ovvero quando esiste un valore
+di \(x\) per il quale vale \(P\), ma non possiamo scegliere una \(x\) a
+caso. E non possiamo neanche dimostrare per tutti i casi possibili (che
+potrebbero essere infiniti). Si procede quindi scegliendo un \(x\)
+generico di cui non si sa niente, se non che \(P(x)\). Se la
+dimostrazione funziona vuol dire che è abbastanza generica da funzionare
+per qualunque altro \(x'\) per cui valga \(P(x')\).\\
+\textbf{Importante}: \(x\) deve essere una variabile \textbf{NON} già in
+uso.
+
+\begin{examplebox}[Esempio]
+
+\emph{``Sia \(X\) tale che \(P(x)\) (\(H\))''}
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio in Lean]
+
+\begin{lstlisting}
+by PROOF_EXISTS_x_Px let x: set such that P(x) as H
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\newpage
+
+\hypertarget{teoremi-e-dimostrazioni}{%
+\section{Teoremi e Dimostrazioni}\label{teoremi-e-dimostrazioni}}
+
+\hypertarget{teorema-di-riflessivituxe0-del-subseteq}{%
+\subsection{\texorpdfstring{Teorema di Riflessività del
+\(\subseteq\)}{Teorema di Riflessività del \textbackslash subseteq}}\label{teorema-di-riflessivituxe0-del-subseteq}}
+
+Il \textbf{Teorema di Riflessività del \(\subseteq\)} afferma che ogni
+insieme è sempre sottoinsieme di sé stesso:
+
+\[
+X \subseteq X
+\]
+
+\textbf{Interpretazione}: Ogni insieme è sottoinsieme di sé stesso.
+Questo significa che ogni elemento di \(X\) è automaticamente anche un
+elemento di \(X\), quindi \(X\) è sempre sottoinsieme di \(X\).
+
+\begin{examplebox}[Dimostrazione]
+
+\emph{Sia \(X\) un insieme fissato.}\\
+\emph{Dobbiamo dimostrare che \(X \subseteq X\), ovvero:
+\(\forall Y.Y \in X \Rightarrow Y \in X\).}\\
+\emph{Sia \(Y\) un insieme fissato.}\\
+\emph{Supponiamo \(Y \in X\) (ipotesi \(H\)).}\\
+\emph{Dobbiamo dimostrare \(Y \in X\).}\\
+\emph{Ovvio per l'ipotesi \(H\).}\\
+\textbf{\emph{Qed.}}
+
+\end{examplebox}
+
+\begin{examplebox}[Dimostrazione in Lean]
+
+\begin{lstlisting}
+theorem reflexivity_inclusion: ∀A, A ⊆ A := by
+  assume A: set
+  we need to prove A ⊆ A that is equivalent to ∀Z, Z ∈ A → Z ∈ A 
+  assume Z: set
+  suppose Z ∈ A as H
+  we need to prove Z ∈ A
+  by H done
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{teorema-di-anti-simmetria-del-subseteq}{%
+\subsection{\texorpdfstring{Teorema di Anti-simmetria del
+\(\subseteq\)}{Teorema di Anti-simmetria del \textbackslash subseteq}}\label{teorema-di-anti-simmetria-del-subseteq}}
+
+Il \textbf{Teorema dell'Anti-simmetria del \(\subseteq\)} afferma che:
+
+\[
+X \subseteq Y \quad \text{e} \quad Y \subseteq X \quad \Rightarrow \quad X = Y
+\]
+
+\textbf{Interpretazione}: Se due insiemi sono reciprocamente
+sottoinsiemi l'uno dell'altro, significa che contengono esattamente gli
+stessi elementi, quindi sono uguali. In altre parole, \(X\) è uguale a
+\(Y\) se ogni elemento di \(X\) è in \(Y\) e ogni elemento di \(Y\) è in
+\(X\).
+
+\begin{examplebox}[Dimostrazione]
+
+\emph{Siano \(X\) e \(Y\) insiemi fissati.}\\
+\emph{Supponiamo \(X \subseteq Y\), ovvero
+\(\forall Z.Z \in X \Rightarrow Z \in Y\) (ipotesi \(H_1\)).}\\
+\emph{Supponiamo \(Y \subseteq X\), ovvero
+\(\forall Z.Z \in Y \Rightarrow Z \in X\) (ipotesi \(H_2\)).}\\
+\emph{Dobbiamo dimostrare \(X = Y\).}\\
+\emph{Per l'\textbf{Assioma di Estensionalità}, è sufficiente dimostrare
+\(\forall Z.Z \in X \iff Z \in Y\).}\\
+\emph{Sia \(Z\) un insieme fissato.}\\
+\emph{\textbf{Dividiamo la dimostrazione}:}\\
+- \emph{Dobbiamo dimostrare \(Z \in X \Rightarrow Z \in Y\)}
+\emph{Supponiamo \(Z \in X\) (ipotesi \(H_3\)).}\\
+\emph{Dobbiamo dimostrare \(Z \in Y\).}\\
+\emph{Ovvio per \(H_1\), \(H_3\).}\\
+- \emph{Dobbiamo dimostrare \(Z \in Y \Rightarrow Z \in X\).}\\
+\emph{Supponiamo \(Z \in Y\) (ipotesi \(H_4\)).}\\
+\emph{Dobbiamo dimostrare \(Z \in X\).}\\
+\emph{Ovvio per \(H_2\), \(H_4\).}\\
+\textbf{\emph{Qed.}}
+
+\end{examplebox}
+
+\begin{examplebox}[Dimostrazione in Lean]
+
+\begin{lstlisting}
+theorem subset_to_eq: ∀A B, A ⊆ B → B ⊆ A → A = B := by
+  assume A: set
+  assume B: set
+  suppose A ⊆ B that is equivalent to ∀Z, Z ∈ A → Z ∈ B as H1
+  suppose B ⊆ A that is equivalent to ∀Z, Z ∈ B → Z ∈ A as H2
+  we need to prove A = B
+  by ax_extensionality1 it suffices to prove ∀Z, Z ∈ A ↔ Z ∈ B
+  assume Z: set
+  we split the proof
+  . we need to prove Z ∈ A → Z ∈ B
+    suppose Z ∈ A as H3
+    we need to prove Z ∈ B
+    by H1, H3 done
+  . we need to prove Z ∈ B → Z ∈ A
+    suppose Z ∈ B as H3
+    we need to prove Z ∈ A
+    by H2, H3 done
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{teorema-di-transitivituxe0-del-subseteq}{%
+\subsection{\texorpdfstring{Teorema di Transitività del
+\(\subseteq\)}{Teorema di Transitività del \textbackslash subseteq}}\label{teorema-di-transitivituxe0-del-subseteq}}
+
+Il \textbf{Teorema di Transitività del \(\subseteq\)} afferma che:
+
+\[
+X \subseteq Y \quad \text{e} \quad Y \subseteq Z \quad \Rightarrow \quad X \subseteq Z
+\]
+
+\textbf{Interpretazione}: Se un insieme \(X\) è sottoinsieme di un
+insieme \(Y\), e \(Y\) è a sua volta sottoinsieme di un insieme \(Z\),
+allora \(X\) è anche sottoinsieme di \(Z\). Questo teorema esprime la
+proprietà di transizione tra inclusioni di insiemi.
+
+\begin{examplebox}[Dimostrazione]
+
+\emph{Siano \(X\), \(Y\) e \(Z\) insiemi fissati.}\\
+\emph{Supponiamo \(X \subseteq Y\), ovvero
+\(\forall A.A \in X \Rightarrow A \in Y\) (ipotesi \(H_1\)).}\\
+\emph{Supponiamo \(Y \subseteq Z\), ovvero
+\(\forall A.A \in Y \Rightarrow A \in Z\) (ipotesi \(H_2\)).}\\
+\emph{Dobbiamo dimostrare \(X \subseteq Z\), ovvero
+\(\forall A.A \in X \Rightarrow A \in Z\).}\\
+\emph{Sia \(A\) un insieme fissato.}\\
+\emph{Supponiamo \(A \in X\) (ipotesi \(H_3\)).}\\
+\emph{Dobbiamo dimostrare \(A \in Z\).}\\
+\emph{Per \(H_1\), \(H_3\) dimostriamo che \(A \in Y\) (ipotesi
+\(H_4\)).}\\
+\emph{Per \(H_2\), \(H_4\) dimostriamo che \(A \in Z\).}\\
+\emph{Quindi ovvio.}\\
+\textbf{\emph{Qed.}}
+
+\end{examplebox}
+
+\begin{examplebox}[Dimostrazione in Lean]
+
+\begin{lstlisting}
+theorem transitivity_inclusion: ∀A B C, A ⊆ B → B ⊆ C → A ⊆ C := by
+  assume A : set
+  assume B : set
+  assume C : set
+  suppose A ⊆ B that is equivalent to ∀Z, Z ∈ A → Z ∈ B as H1
+  suppose B ⊆ C that is equivalent to ∀Z, Z ∈ B → Z ∈ C as H2
+  we need to prove A ⊆ C that is equivalent to ∀Z, Z ∈ A → Z ∈ C 
+  assume Z : set
+  suppose Z ∈ A as H3
+  by H1, H3 we proved Z ∈ B as H4
+  by H2, H4 we proved Z ∈ C
+  thus done
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{teorema-del-vuoto-come-sottoinsieme-di-ogni-cosa}{%
+\subsection{Teorema del Vuoto come sottoinsieme di ogni
+cosa}\label{teorema-del-vuoto-come-sottoinsieme-di-ogni-cosa}}
+
+Il teorema afferma che l'insieme vuoto \(\emptyset\) è sottoinsieme di
+ogni insieme:
+
+\[
+\emptyset \subseteq X
+\]
+
+\textbf{Interpretazione}: L'insieme vuoto è considerato un
+\textbf{sottoinsieme di ogni insieme}, poiché non contiene elementi. La
+condizione per essere sottoinsieme è che ogni elemento dell'insieme
+vuoto sia anche un elemento di \(X\), ma non essendoci elementi
+nell'insieme vuoto, questa condizione è automaticamente soddisfatta per
+qualsiasi insieme \(X\).
+
+\begin{examplebox}[Dimostrazione]
+
+\emph{Sia \(X\) un insieme fissato.}\\
+\emph{Dobbiamo dimostrare \(\emptyset \subseteq X\) ovvero
+\(\forall Z.Z \in \emptyset \Rightarrow Z \in X\).}\\
+\emph{Sia \(Z\) un insieme fissato.}\\
+\emph{Supponiamo \(Z \in \emptyset\) (ipotesi \(H_1\)).}\\
+\emph{Dobbiamo dimostrare \(Z \in X\).}\\
+\emph{Per l'\textbf{Assioma dell'Insieme Vuoto} sappiamo che
+\(\neg (Z \in \emptyset )\) (ipotesi \(H_2\)).}\\
+\emph{Per \(H_1\), \(H_2\) abbiamo un assurdo.}\\
+\emph{Quindi dimostriamo che \(Z \in X\).}\\
+\emph{Quindi ovvio.}\\
+\emph{\textbf{Qed}.}
+
+\end{examplebox}
+
+\begin{examplebox}[Dimostrazione in Lean]
+
+\begin{lstlisting}
+theorem emptyset_is_subset: ∀A, ∅ ⊆ A := by
+  assume A : set
+  we need to prove ∅ ⊆ A that is equivalent to ∀Z, Z ∈ ∅ → Z ∈ A
+  assume Z : set
+  suppose Z ∈ ∅ as H1
+  we need to prove Z ∈ A
+  by ax_empty we proved ¬(Z ∈ ∅) as H2
+  by H1, H2 we proved False
+  thus we proved Z ∈ A
+  thus done
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{teorema-del-vuoto-come-unico-sottoinsieme-del-vuoto}{%
+\subsection{Teorema del vuoto come unico sottoinsieme del
+vuoto}\label{teorema-del-vuoto-come-unico-sottoinsieme-del-vuoto}}
+
+Il teorema afferma che \textbf{l'unico sottoinsieme dell'insieme vuoto}
+è l'insieme vuoto stesso: \[
+X \subseteq \varnothing \;\Rightarrow\; X = \varnothing
+\]
+
+\textbf{Interpretazione}: L'insieme vuoto \textbf{non contiene alcun
+elemento}, quindi non esiste alcun insieme non vuoto che possa essere
+suo sottoinsieme.\\
+L'unico insieme che soddisfa la condizione ``ogni elemento di \(X\)
+appartiene anche a \(\emptyset\)'' è proprio \(X=\emptyset\). In altre
+parole, \textbf{il vuoto è sottoinsieme solo di sé stesso}.
+
+\begin{examplebox}[Dimostrazione]
+
+\emph{Sia \(X\) un insieme tale che \(X \subseteq \emptyset\), ovvero
+\(\forall Z , (Z \in X \Rightarrow Z \in \emptyset)\) (ipotesi
+\(H\)).}\\
+\emph{Dobbiamo dimostrare \(X = \emptyset\).}\\
+\emph{Per l'\textbf{assioma di estensionalità} possiamo ridurci a
+dimostrare \(\forall Z , (Z \in X \Leftrightarrow Z \in \emptyset)\).}\\
+\emph{Sia \(Z\) un insieme.}\\
+\textbf{\emph{Dividiamo la dimostrazione:}}\\
+- \emph{Dobbiamo dimostrare \(Z \in X \Rightarrow Z \in \emptyset\).}\\
+\emph{Per \(H\) ovvio.}\\
+- \emph{Dobbiamo dimostrare \(Z \in \emptyset \Rightarrow Z \in X\).}\\
+\emph{Per il \textbf{teorema del vuoto come sottoinsieme di ogni cosa}
+dimostriamo che
+\(\forall Z , (Z \in \emptyset \Rightarrow Z \in X)\).}\\
+\emph{Quindi ovvio.}\\
+\textbf{\emph{Qed.}}
+
+\end{examplebox}
+
+\begin{examplebox}[Dimostrazione alternativa]
+
+\emph{Sia \(X\) un insieme tale che \(X \subseteq \emptyset\) (ipotesi
+\(H\)).}\\
+\emph{Dobbiamo dimostrare \(X = \emptyset\).}\\
+\emph{Per il \textbf{teorema del vuoto come sottoinsieme di ogni cosa}
+dimostriamo che \(\emptyset \subseteq X\).}\\
+\emph{Quindi, per \(H\) e il \textbf{teorema dell'anti-simmetria del
+\(\subseteq\)}, ovvio.}\\
+\textbf{\emph{Qed.}}
+
+\end{examplebox}
+
+\begin{examplebox}[Dimostrazione in Lean]
+
+\begin{lstlisting}
+theorem subseteq_emptyset: ∀X, X ⊆ ∅ → X = ∅ := by
+  assume X : set
+  suppose X ⊆ ∅ as H
+  we need to prove X = ∅
+  by emptyset_is_subset we proved ∅ ⊆ X
+  thus by H, subset_to_eq done
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{teorema-dellintersezione-con-il-vuoto}{%
+\subsection{Teorema dell'intersezione con il
+vuoto}\label{teorema-dellintersezione-con-il-vuoto}}
+
+Il teorema afferma che l'intersezione di un qualunque insieme \(X\) con
+l'insieme vuoto è l'insieme vuoto stesso: \[
+X \cap \varnothing = \varnothing
+\] \textbf{Interpretazione}: Poiché l'insieme vuoto non contiene
+elementi, non esistono elementi comuni tra \(X\) e \(\emptyset\).
+L'intersezione risulta quindi vuota.
+
+\begin{examplebox}[Dimostrazione]
+
+\emph{Sia \(X\) un insieme.}\\
+\emph{Per l'\textbf{assioma di estensionalità} possiamo ridurci a
+dimostrare
+\(\forall Z , (Z \in X \cap \emptyset \Leftrightarrow Z \in \emptyset)\).}\\
+\emph{Sia \(Z\) un insieme.} \emph{Dividiamo la dimostrazione:}\\
+- \emph{Dobbiamo dimostrare
+\(Z \in X \cap \emptyset \Rightarrow Z \in \emptyset\).}\\
+\emph{Supponiamo \(Z \in X \cap \emptyset\).}\\
+\emph{Quindi, per il \textbf{teorema dell'intersezione binaria},
+\(Z \in X\) (ipotesi \(H_1\)) e \(Z \in \emptyset\) (ipotesi
+\(H_2\)).}\\
+\emph{Per \(H_2\) ovvio.}\\
+- \emph{Dobbiamo dimostrare
+\(Z \in \emptyset \Rightarrow Z \in X \cap \emptyset\).}\\
+\emph{Supponiamo \(Z \in \emptyset\).}\\
+\emph{Per il \textbf{teorema del vuoto come sottoinsieme di ogni cosa},
+ovvio.}\\
+\textbf{\emph{Qed.}}
+
+\end{examplebox}
+
+\begin{examplebox}[Dimostrazione in Lean]
+
+\begin{lstlisting}
+theorem intersect_empty: ∀A, A∩∅ = ∅ := by
+  assume A : set
+  by ax_extensionality1 it suffices to prove ∀Z, Z ∈ A∩∅ ↔ Z ∈ ∅ 
+  assume Z : set
+  we split the proof
+  . we need to prove Z ∈ A∩∅ → Z ∈ ∅
+    suppose Z ∈ A∩∅ 
+    thus by ax_intersect1 we proved Z ∈ A as H1 and Z ∈ ∅ as H2
+    by H2 done
+  . we need to prove Z ∈ ∅ → Z ∈ A∩∅
+    suppose Z ∈ ∅
+    thus by emptyset_is_subset done 
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{teorema-della-monotonia-dellintersezione}{%
+\subsection{Teorema della Monotonia
+dell'intersezione}\label{teorema-della-monotonia-dellintersezione}}
+
+Per ogni insieme \(X\), \(X'\), \(Y\) vale che: \[
+X \subseteq X' \;\Rightarrow\; X \cap Y \subseteq X' \cap Y
+\] \textbf{Interpretazione:} Se \(X\) è contenuto in \(X'\), allora
+anche la parte di \(X\) che si trova in \(Y\) sarà contenuta nella parte
+di \(X'\) che si trova in \(Y\). In altre parole, l'intersezione è
+\textbf{monotona} rispetto all'inclusione: aumentare uno degli insiemi
+non può ridurre l'intersezione.
+
+\begin{examplebox}[Dimostrazione]
+
+\emph{Siano \(X\), \(X'\) e \(Y\) insiemi tali che \(X \subseteq X'\),
+ovvero \(\forall Z , (Z \in X \Rightarrow Z \in X')\) (ipotesi
+\(H_1\)).}\\
+\emph{Dobbiamo dimostrare \(X \cap Y \subseteq X' \cap Y\), ovvero
+\(\forall Z , (Z \in X \cap Y \Rightarrow Z \in X' \cap Y)\).}\\
+\emph{Sia \(Z\) un insieme tale che \(Z \in X \cap Y\).}\\
+\emph{Quindi, per il \textbf{teorema dell'intersezione binaria},
+\(Z \in X\) (ipotesi \(H_2\)) e \(Z \in Y\) (ipotesi \(H_3\)).}\\
+\emph{Dobbiamo dimostrare \(Z \in X' \cap Y\).}\\
+\emph{Per il \textbf{teorema dell'intersezione binaria} possiamo ridurci
+a dimostrare \(Z \in X' \land Z \in Y\).}\\
+\emph{Per \(H_1\) e \(H_2\) dimostriamo \(Z \in X'\).}\\
+\emph{Quindi, per \(H_3\), ovvio.}\\
+\textbf{\emph{Qed.}}
+
+\end{examplebox}
+
+\begin{examplebox}[Dimostrazione in Lean]
+
+\begin{lstlisting}
+theorem intersect_monotone: ∀A B A', A⊆A' → A∩B ⊆ A'∩B := by
+  assume A : set
+  assume B : set
+  assume A' : set
+  suppose A ⊆ A' that is equivalent to ∀Z, Z ∈ A → Z ∈ A' as H1
+  we need to prove A∩B ⊆ A'∩B that is equivalent to ∀Z, Z ∈ A∩B → Z ∈ A'∩B
+  assume Z : set 
+  suppose Z ∈ A∩B
+  thus by ax_intersect1 we proved Z ∈ A as H2 and Z ∈ B as H3
+  we need to prove Z ∈ A'∩B
+  by ax_intersect2 it suffices to prove Z ∈ A' ∧ Z ∈ B
+  by H1, H2 we proved Z ∈ A'
+  thus by H3 done
+\end{lstlisting}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{teorema-della-monotonia-dellunione}{%
+\subsection{Teorema della monotonia
+dell'unione}\label{teorema-della-monotonia-dellunione}}
+
+Per ogni insieme \(X\), \(X'\) e \(Y\) vale che: \[
+X \subseteq X' \;\Rightarrow\; X \cup Y \subseteq X' \cup Y
+\] \textbf{Interpretazione:} Se \(X\) è contenuto in \(X'\), allora
+tutti gli elementi di \(X\) appartengono anche a \(X'\). Di conseguenza,
+unendo \(X\) con un altro insieme \(Y\), non si ottiene nulla che non
+sarebbe già presente nell'unione di \(X'\) con \(Y\). In altre parole,
+l'unione è \textbf{monotona} rispetto all'inclusione: ampliando uno
+degli insiemi, l'unione può solo crescere o restare uguale, mai
+diminuire.
+
+\begin{examplebox}[Dimostrazione]
+
+\emph{Siano \(X\), \(X'\), e \(Y\) insiemi tali che \(X \subseteq X'\),
+ovvero \(\forall Z , (Z \in X \Rightarrow Z \in X')\) (ipotesi
+\(H_1\)).}\\
+\emph{Dobbiamo dimostrare \(X \cup Y \subseteq X' \cup Y\), ovvero
+\(\forall Z , (Z \in X \cup Y \Rightarrow Z \in X' \cup Y)\).}\\
+\emph{Sia \(Z\) un insieme tale che \(Z \in X \cup Y\).}\\
+\emph{Per il \textbf{teorema dell'unione binaria} dimostriamo che
+\(Z \in X \lor Z \in Y\) (ipotesi \(H_2\)).}\\
+\emph{Per il \textbf{teorema dell'unione binaria} ci riduciamo a
+dimostrare \(Z \in X' \lor Z \in Y\).}\\
+\emph{Procediamo per casi su \(H_2\):}\\
+- \emph{Caso \(Z \in X\) (ipotesi \(K\)):}\\
+\emph{Dimostriamo \(Z \in X'\).}\\
+\emph{Per \(H_1\), \(K\) ovvio.}\\
+- \emph{Caso \(Z \in Y\) (ipotesi \(K\)):}\\
+\emph{Dimostriamo \(Z \in Y\).}\\
+\emph{Per \(K\) ovvio.}\\
+\textbf{\emph{Qed.}}
+
+\end{examplebox}
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\newpage
+
+\hypertarget{elementi-matematici-relazioni-funzioni}{%
+\section{Elementi matematici, relazioni,
+funzioni}\label{elementi-matematici-relazioni-funzioni}}
+
+Le basi della matematica vengono implementare a partire dalla teoria
+degli insiemi.
+
+\hypertarget{coppie-ordinate}{%
+\subsection{Coppie ordinate}\label{coppie-ordinate}}
+
+In un insieme l'ordine non conta. Ad esempio \(\{1, 2\} = \{2, 1\}\).
+Una \textbf{coppia ordinata} è invece una coppia dove c'è un primo e un
+secondo elemento, un concetto diverso da quello di insieme. Due coppie
+sono uguali see lo sono rispettivamente sia il primo che il secondo
+elemento.
+
+Le coppie ordinate vengono indicate con le parentesi angolari: \[
+\langle 1, 2 \rangle \not = \langle 2, 1 \rangle \not = \{1, 2\}
+\] Una coppia non deve essere pensata come contenente (nel senso di
+\(\in\)) i suoi elementi: \[
+2 \not \in \langle 1, 2 \rangle
+\] Le coppie ordinate vengono così definite: dati \(X\) e \(Y\) viene
+chiamata \textbf{coppia ordinata} di prima componente \(X\) e seconda
+componente \(Y\) il seguente insieme: \[
+\langle X, Y \rangle := \{X, \{X, Y\}\}
+\]
+
+\hypertarget{teorema-di-caratterizzazione-delle-coppie}{%
+\subsubsection{Teorema di caratterizzazione delle
+coppie}\label{teorema-di-caratterizzazione-delle-coppie}}
+
+Il \textbf{teorema di caratterizzazione delle coppie} afferma che due
+coppie sono uguali se e solo se lo sono rispettivamente sia il primo che
+il secondo elemento: \[
+\langle X, Y \rangle = \langle X', Y' \rangle \iff X = X' \; \land Y = Y'
+\]
+
+\begin{examplebox}[Dimostrazione]
+
+omessa.
+
+\end{examplebox}
+
+\hypertarget{corollario-del-teorema-delle-coppie}{%
+\subsubsection{Corollario del teorema delle
+coppie}\label{corollario-del-teorema-delle-coppie}}
+
+Il corollario dice che: \[
+\langle X, Y \rangle \not = \langle Y, X \rangle \text{ a meno che } X = Y
+\] In pratica, scambiare gli elementi di una coppia, la rende una coppia
+diversa, a meno che i due elementi non siano uguali.
+
+\hypertarget{prodotto-cartesiano-di-insiemi}{%
+\subsection{Prodotto cartesiano di
+insiemi}\label{prodotto-cartesiano-di-insiemi}}
+
+L'esistenza del \textbf{prodotto cartesiano di insiemi come insieme} è
+garantito dal seguente teorema: \[
+\forall A, \forall B, \exists C, \forall Z, (Z \in C \iff \exists a, \exists b, (a \in A \land b \in B \land Z = \langle a, b \rangle ))
+\]
+
+L'insieme \(C\) viene chiamato \textbf{prodotto cartesiano} di \(A\) e
+\(B\) e lo indichiamo come \(A \times B\). Intuitivamente esso è
+l'\textbf{insieme di tutte le coppie} dove il primo termine è un
+elemento di \(A\) e il secondo termine un elemento di \(B\).
+
+\begin{examplebox}[Esempio]
+
+\[
+\{a, b\} \times \{1, 2\} = \{\langle a, 1 \rangle, \langle a, 2 \rangle , \langle b, 1 \rangle , \langle b, 2 \rangle\}
+\]
+
+\end{examplebox}
+
+\hypertarget{relazioni}{%
+\subsection{Relazioni}\label{relazioni}}
+
+Una \textbf{relazione} fra due insiemi \(A\) e \(B\) è un qualunque
+sottoinsieme del prodotto cartesiano \(A \times B\). Posso esprimerla
+elencando in un insieme tutte le coppie ordinate che ne fanno parte.
+
+Se \(\mathcal{R}\) è una relazione, possiamo scrivere
+\(a \mathcal{R} b\) se e solo se
+\(\langle a, b\rangle \in \mathcal{R}\).
+
+\begin{examplebox}[Esempio]
+
+La relazione \(\leq\) sull'insieme numerico \(\{0, 1, 2\}\) è definita
+così: \[
+\leq \; = \{\langle 0, 0 \rangle, \langle 0, 1 \rangle , \langle 0, 2 \rangle , \langle 1, 1 \rangle , \langle 1, 2 \rangle , \langle 2, 2 \rangle\}
+\] e \(0 \leq 2\) è solo una notazione per
+\(\langle 0, 2 \rangle \in \; \leq\)
+
+\end{examplebox}
+
+\hypertarget{relazioni-da-e-verso-insieme-vuoti}{%
+\subsubsection{Relazioni da e verso insieme
+vuoti}\label{relazioni-da-e-verso-insieme-vuoti}}
+
+Il teorema riguardante le relazioni da e verso insiemi vuoti dice che:
+\[
+\mathcal{R} \subseteq A \times \emptyset \Rightarrow \mathcal{R} = \emptyset
+\] \[
+\text{o anche}
+\] \[
+\mathcal{R} \subseteq \emptyset \times A \Rightarrow \mathcal{R} = \emptyset
+\] Ovvero \(\mathcal{R}\) è solo la \textbf{relazione vuota}.
+
+Dimostrazione intuitiva: non posso formare coppie prendendo uno dei due
+elementi dall'insieme vuoto, perché tale insieme è vuoto. Quindi
+l'insieme di tali coppie sarà vuoto.
+
+\hypertarget{funzioni}{%
+\subsection{Funzioni}\label{funzioni}}
+
+Una \textbf{funzione} di \textbf{dominio} \(A\) e \textbf{codomino}
+\(B\) è una qualunque relazione \(f \subseteq A \times B\) tale che: \[
+\forall X, (X \in A \Rightarrow \exists! \, Y, X \, f \,Y)
+\] Ovvero è una relazione per la quale per ogni elemento del dominio c'è
+un \textbf{unico} elemento del codomino in relazione con esso.
+
+Se \(f\) è una funzione possiamo usare la seguente notazione: \[
+y = f (x) 
+\] per indicare \(x\; f\; y\), ovvero \(\langle x, y \rangle \in f\)
+
+Una funzione è quindi semplicemente un insieme (anche infinito) di
+coppie. Da notare che non c'è però nessuna garanzia che essa sia
+calcolabile (che esista un metodo per calcolarla).
+
+\hypertarget{spazio-di-funzioni}{%
+\subsubsection{Spazio di funzioni}\label{spazio-di-funzioni}}
+
+Dati due insiemi \(A\) e \(B\) è possibile dimostrare che esiste
+l'insieme che contiene tutte e sole le funzioni da \(A\) a \(B\). In
+particolare il teorema dice che: \[
+\forall A, \forall B, \exists C, \forall f,(f \in C \iff f \text{ è una funzione di dominio } A \text{ e codominio } B)
+\] L'insieme \(C\) viene indicato come \(B^A\) e rappresenta lo
+\textbf{spazio delle funzioni} da \(A\) a \(B\).
+
+Abbiamo due casi particolare per le funzioni da/verso insiemi vuoti: \[
+B^{\emptyset} = \{ \emptyset\}
+\] \[
+\emptyset^A = \emptyset \; \text{ see }\; A \not = \emptyset
+\] Infatti, in quanto ogni funzione da \(A\) verso \(B\) è una relazione
+fra \(A\) e \(B\), se \(A\) o \(B\) sono vuoti, le uniche relazioni sono
+la \textbf{relazione vuota} (già dimostrato). Però la relazione vuota è
+una funzione solo se è il dominio ad essere vuoto perché altrimenti a un
+elemento del dominio dovrei associare uno e un solo elemento del
+codominio, ma questo non ne ha in quanto vuoto.
+
+\hypertarget{proprietuxe0-delle-relazioni}{%
+\subsection{Proprietà delle
+relazioni}\label{proprietuxe0-delle-relazioni}}
+
+\begin{examplebox}[Notazioni utili]
+
+In seguito utilizzeremo le seguenti notazioni:\\
+1. \[
+\forall X \in A, P(X)
+\] per indicare che per ogni \(X\) in \(A\) vale \(P(X)\), ovvero che
+\(\forall X, (X \in A \Rightarrow P(X))\) .\\
+2. \[
+\exists X \in A, P(X)
+\] per indicare che esiste un \(X\) in \(A\) tale che \(P(X)\), ovvero
+che \(\exists X, (X \in A \land P(X))\)\\
+3. \[
+\forall X, Y \in A, P(X, Y)
+\] per indicare che \(\forall X \in A, \forall Y \in A, P(X, Y)\)\\
+4. \[
+\exists X, Y \in A, P(X, Y)
+\] per indicare che \(\exists X \in A, \exists Y \in A, P(X, Y)\)
+
+\end{examplebox}
+
+Sia \(\mathcal{R} \subseteq A \times A\) . La relazione \(\mathcal{R}\)
+può godere di una o più delle seguenti proprietà:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Riflessiva}, se \[
+  \forall X \in A, X \, \mathcal{R} \, X
+  \]
+\item
+  \textbf{Simmetrica}, se \[
+  \forall X, Y \in A, (X \, \mathcal{R} \, Y \Rightarrow Y \, \mathcal{R} \, X)
+  \]
+\item
+  \textbf{Transitiva}, se \[
+  \forall X, Y, Z \in A, (X \, \mathcal{R} \, Y \land Y \, \mathcal{R} \, Z \Rightarrow X \, \mathcal{R} \, Z)
+  \]
+\end{itemize}
+
+\begin{examplebox}[Esempi]
+
+\begin{itemize}
+\tightlist
+\item
+  \(=\) gode di tutte e tre le proprietà, infatti \(X = X\)
+  (p.~riflessiva), se \(X = Y\) allora \(Y = X\) (p.~simmetrica) e se
+  \(X = Y, Y = Z\) allora \(X = Z\) (p.~transitiva).
+\item
+  \(<\) sui numeri naturali è transitiva, ma non simmetrica e non
+  riflessiva.
+\item
+  \(\leq\) sui numeri naturali è riflessiva e transitiva, ma non
+  simmetrica.
+\item
+  \(\not =\) è simmetrica, ma non riflessiva e transitiva (ad esempio se
+  \(1 \not = 2 \not = 1\) non è vero che \(1 \not = 1\)).
+\end{itemize}
+
+\end{examplebox}
+
+\hypertarget{tipi-di-relazioni}{%
+\subsection{Tipi di relazioni}\label{tipi-di-relazioni}}
+
+Sia \(\mathcal{R} \subseteq A \times A\) :
+
+\begin{itemize}
+\tightlist
+\item
+  \(\mathcal{R}\) è di \textbf{ordine stretto} se e solo se
+  \(\mathcal{R}\) è \textbf{transitiva} e \textbf{non riflessiva}. Una
+  relazione di ordinamento non deve per forza essere intesa come una
+  retta, ma piuttosto come un albero.
+\end{itemize}
+
+\begin{examplebox}[Esempi]
+
+\begin{itemize}
+\tightlist
+\item
+  \(=, \not = , \leq\) non sono relazioni di ordinamento strette.
+\item
+  \(<\) è una relazione di ordinamento stretta.
+\item
+  ``\emph{Essere antenato di}'' è un ordinamento stretto sulle persone.
+\end{itemize}
+
+\end{examplebox}
+
+\begin{itemize}
+\tightlist
+\item
+  \(\mathcal{R}\) è di \textbf{ordine (lasco)} se e solo se
+  \(\mathcal{R}\) è \textbf{transitiva}, \textbf{riflessiva} e
+  \textbf{antisimmetrica}
+\end{itemize}
+
+\begin{examplebox}[Esempi]
+
+\begin{itemize}
+\tightlist
+\item
+  \(=, \leq, \subseteq\) sono relazioni di ordinamento.
+\item
+  \(\mid\) (``\emph{divide}'') è una relazione di ordinamento sui numeri
+  naturali.
+\item
+  \(\not = , <\) non sono reazioni di ordinamento.
+\end{itemize}
+
+\end{examplebox}
+
+\begin{itemize}
+\tightlist
+\item
+  \(\mathcal{R}\) è di \textbf{equivalenza} se e solo se \(\mathcal{R}\)
+  è \textbf{transitiva}, \textbf{riflessiva} e \textbf{simmetrica}. Una
+  relazione di equivalenza assomiglia all'uguaglianza, ma si concentra
+  solo su un certo aspetto: l'uguaglianza è estremamente stretta,
+  infatti due oggetti sono uguali solo se sono lo stesso oggetto, mentre
+  l'equivalenza si limita a verificare che una (o più) caratteristica di
+  due oggetti sia uguale.
+\end{itemize}
+
+\begin{examplebox}[Esempi]
+
+\begin{itemize}
+\tightlist
+\item
+  \(=\) è una relazione di equivalenza.
+\item
+  ``\emph{avere lo stesso cognome}'', ``\emph{essere dello stesso
+  modello}'' sono relazioni di equivalenza.
+\item
+  \(\leq , < , \not =\) non sono relazioni di equivalenza.
+\end{itemize}
+
+\end{examplebox}
+
+\hypertarget{classi-di-equivalenza}{%
+\subsection{Classi di equivalenza}\label{classi-di-equivalenza}}
+
+Le relazioni di equivalenza di solito si indicano con dei simboli che
+ricordano l'equivalenza (per esempio \(\equiv\)). Inoltre a partire da
+un relazione di equivalenza \(\equiv \; \subseteq A \times A\), possiamo
+definire la \textbf{classe di equivalenza di \(x \in A\) rispetto a
+\(\equiv\)} nel seguente modo: \[
+[x]_\equiv \; \overset{\mathrm{def}}{=} \; \{y \in A \mid y \equiv x\}
+\] In pratica \([x]_\equiv\) conterrà tutti gli elementi (appartenenti
+ad \(A\)) equivalenti a \(x\), ovvero tutti gli elementi che hanno
+quella proprietà (espressa tramite \(\equiv\)) che ha \(x\).\\
+Per ognuna delle possibili proprietà di un elemento \(x\) particolare
+posso ottenere una diversa classe di equivalenza.
+
+Il \textbf{teorema delle classi di equivalenza} afferma che:
+
+Sia \(\equiv \; \subseteq A \times A\) una relazione di equivalenza. Per
+ogni \(x, y \in A\) accade una di queste due cose: o
+\([x]_\equiv = [y]_\equiv\) (quando \(x \equiv y\)) oppure
+\([x]_\equiv\) e \([y]_\equiv\) sono insiemi disgiunti (senza elementi
+in comune) (quando \(x \not \equiv y\)).\\
+In pratica o la classe di equivalenza è la stessa o le classi di
+equivalenza sono insiemi disgiunti.
+
+\begin{examplebox}[Dimostrazione]
+
+Per la proprietà transitiva di \(\equiv\), se \(x \equiv y\) allora ogni
+\(z \in [x]_\equiv\) è tale che \(z \equiv x \equiv y\) e quindi
+\(z \in [y]_\equiv\) e perciò \([x]_\equiv = [y]_\equiv\)\\
+Inoltre, per le proprietà simmetrica e transitiva di \(\equiv\), se
+\(z \in [x]_\equiv \cap [y]_\equiv\) allora \(x \equiv z \equiv y\) e
+perciò \([x]_\equiv = [y]_\equiv\)\\
+Quindi le due classi sono identiche o disgiunte.\\
+\textbf{Nota:} \(x\) appartiene sempre alla classe di equivalenza di
+\(x\) (di una certa proprietà) per riflessività.
+
+\end{examplebox}
+
+Le classi di equivalenza rappresentano un'astrazione degli elementi,
+considerando una sola proprietà, e sono perciò particolarmente utili per
+\textbf{passare da una relazione di equivalenza a una di uguaglianza},
+infatti se \(x \equiv y\), non è vero che \(x = y\), ma è vero che
+\([x]_\equiv = [y]_\equiv\) .
+
+Tramite le classi di equivalenza si può fare la \textbf{partizione di un
+insieme}: dato un insieme è possibile dividerlo in varie parti che non
+hanno elementi in comune.
+
+\begin{examplebox}[Esempio di classe di equivalenza]
+
+Se la relazione \(\equiv\) è definita come ``\emph{avere la stessa
+lettera iniziale}'', le varie classi di equivalenza sono ad esempio: \[
+[\text{"albero"}]_\equiv = \{\text{"albero"}, \text{"alga"}, \text{"armadillo"}, \dots \}
+\] \[
+[\text{"alga"}]_\equiv = \{\text{"albero"}, \text{"alga"}, \text{"armadillo"}, \dots \}
+\] \[
+[\text{"banana"}]_\equiv = \{\text{"banana"}, \text{"borsetta"}, \text{"bullo"}, \dots\}
+\] ed è vero che: \[
+[\text{"albero"}]_\equiv = [\text{"alga"}]_\equiv = [\text{"armadillo"}]_\equiv = \dots
+\] \[
+[\text{"albero"}]_\equiv \cap [\text{"banana"}]_\equiv = \emptyset
+\]
+
+\end{examplebox}
+
+\hypertarget{insieme-quoziente}{%
+\subsection{Insieme quoziente}\label{insieme-quoziente}}
+
+Sia \(\equiv \; \subseteq A \times A\) una relazione di equivalenza.
+Possiamo definire l'\textbf{insieme quoziente} di \(A\) rispetto a
+\(\equiv\) nel seguente modo: \[
+A_{/\equiv} \overset{\mathrm{def}}{=} \{[x]_\equiv\ \mid x \in A\}
+\] In pratica l'insieme \(A_{/\equiv}\) rappresenta l'insieme contenente
+tutte le classi di equivalenza degli elementi di \(A\) rispetto ad una
+certa relazione di equivalenza (\(\equiv\)). L'esistenza di tale insieme
+è garantita dall'assioma di rimpiazzamento.
+
+\begin{examplebox}[Esempio]
+
+``\emph{avere la stessa età}'' è una relazione di equivalenza sulle
+persone. Se la indichiamo con \(\equiv\), allora possiamo dire che ad
+esempio \([Andrea]_\equiv\) = tutte le persone che hanno 19 anni. E così
+via.\\
+Avremo quindi che \(Persone_{/\equiv}\) (l'insieme quoziente delle
+persone rispetto all'avere la stessa età) conterrà un elemento per ogni
+possibile età, e tale elemento sarà l'insieme di tutte le persone che
+hanno la tale età.
+
+\end{examplebox}
+
+Possiamo intuire il fatto che gli insiemi quozienti sono strumenti
+potenti che permettono di implementare nuovi concetti a partire da
+concetti pre-esistenti, per poi ``nascondere'' i dettagli dovuti alla
+rappresentazione.
+
+\hypertarget{esempio-i-numeri-interi-mathbbz}{%
+\subsubsection{\texorpdfstring{Esempio: i numeri interi
+\(\mathbb{Z}\)}{Esempio: i numeri interi \textbackslash mathbb\{Z\}}}\label{esempio-i-numeri-interi-mathbbz}}
+
+Poiché nei numeri naturali alcune operazioni, come la sottrazione, non
+sono chiuse, vorremmo costruire nuovi insiemi numerici che le
+permettano.\\
+L'introduzione dei numeri interi permette di fare sottrazioni fra numeri
+naturali arbitrari (es. \(4 - 2\)).\\
+Costruzione di \(\mathbb{Z}\):
+
+\begin{itemize}
+\tightlist
+\item
+  Definiamo un insieme \(Z = \mathbb{N} \times \mathbb{N}\) i cui
+  elementi, che sono coppie ordinate \(\langle n, m \rangle\),
+  rappresenteranno intuitivamente i valori del tipo \(n - m\).\\
+\item
+  Ora abbiamo bisogno di una relazione di equivalenza che permetta di
+  affermare che ad esempio \(\langle 2, 4 \rangle\) sia equivalente a
+  \(\langle 3, 5 \rangle\) (infatti vogliamo che \(2 - 4 = 3 - 5\)).\\
+\item
+  Definiamo la relazione \(\equiv \subseteq Z \times Z :\) \[
+  \langle u_1, l_1 \rangle \equiv \langle u_2, l_2 \rangle \overset{\mathrm{def}}{=} u_1 + l_2 = u_2 + l_1
+  \] In pratica passiamo dalla sottrazione all'addizione, in quanto
+  questa è definita in \(\mathbb{N}\), e così possiamo affermare che
+  \(\langle 2, 4 \rangle \equiv \langle 3, 5 \rangle\) perché
+  rappresentano la stessa sottrazione, poiché \(2 + 5 = 4 + 3\) (infatti
+  \(2 - 4 = 3 - 5 \iff 2 + 5 = 4 + 3\)).\\
+\item
+  È facile dimostrare che \(\equiv\) è una relazione di equivalenza.\\
+\item
+  Ora possiamo quindi definire l'insieme dei numeri interi come
+  l'insieme quoziente di \(Z\) rispetto a \(\equiv\): \[
+  \mathbb{Z} \overset{\mathrm{def}}{=} Z_{/\equiv}
+  \] \[
+  \mathbb{Z} = \{\dots, [\langle0, 2 \rangle]_\equiv \, , [\langle0, 1 \rangle]_\equiv \,, [\langle0,0 \rangle]_\equiv \, , [\langle1, 0 \rangle]_\equiv \, , [\langle2, 0 \rangle]_\equiv \, , \dots \}
+  \]
+\item
+  Indicheremo \([\langle0, i \rangle]_\equiv\) con \(-i\),
+  \([\langle0, 0 \rangle]_\equiv\) con \(0\) e
+  \([\langle i, 0 \rangle]_\equiv\) con \(+i\) , perciò avremo che: \[
+  \mathbb{Z} = \{\dots , -2, -1, 0, +1, +2, \dots \}
+  \]
+\end{itemize}
+
+A seguito di questa costruzione possiamo intendere il fatto che il ``2''
+numero naturale è diverso dal ``2'' numero intero in quanto hanno
+rappresentazioni (costruzioni) diverse. Il matematico però di solito fa
+implicitamente il passaggio tra uno e l'altro.
+
+\hypertarget{proprietuxe0-delle-funzioni}{%
+\subsection{Proprietà delle
+funzioni}\label{proprietuxe0-delle-funzioni}}
+
+Sia \(f \in B^A\) una funzione di dominio \(A\) e codominio \(B\). La
+funzione \(f\) può essere:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{iniettiva} se
+  \[\forall x, y \in A, (f(x) = f(y) \Rightarrow x = y)\]ovvero se non
+  esistono due elementi distinti del dominio che mappano allo stesso
+  elemento nel codominio (possono però esserci punti addizionali del
+  codominio che non utilizzo).
+\item
+  \textbf{suriettiva} se
+  \[ \forall y \in B, \exists x \in A, f(x) = y \] ovvero se tutti i
+  punti del codominio sono mappati a un elemento del dominio (magari
+  anche a più di uno).
+\item
+  \textbf{biettiva} se \[ f \text{ è sia iniettiva che suriettiva} 
+  \]
+\end{enumerate}
+
+\begin{examplebox}[Esempi]
+
+\begin{itemize}
+\tightlist
+\item
+  \(+1\) è biettiva sui numeri interi, iniettiva ma non suriettiva sui
+  naturali (\(0\) nel codominio non viene mappato con nessun elemento
+  del dominio, ovvero non c'è nessun numero naturale \(n\) tale che
+  \(n + 1 = 0\)).
+\item
+  \(\left| z \right|\) (il valore assoluto) è non suriettiva e non
+  iniettiva sugli interi.\\
+\end{itemize}
+
+\end{examplebox}
+
+A questo punto possiamo iniziare a ragionare sul concetto di dimensione
+di un insieme e possiamo provare a formulare le seguenti intuizioni:
+
+\begin{itemize}
+\tightlist
+\item
+  Se \(f\) è iniettiva allora \(B\) ha \textbf{almeno} tanti elementi
+  quanti ne ha \(A\).
+\item
+  Se \(f\) è suriettiva allora \(A\) ha \textbf{almeno} tanti elementi
+  quanti ne ha \(B\).
+\item
+  Se \(f\) è biettiva allora \(A\) e \(B\) hanno lo stesso ``numero''
+  (la stessa quantità) di elementi.
+\end{itemize}
+
+Questa intuizione è buona, ma non possiamo ragionare in termine di
+numeri: quanti elementi (in numero) ha un insieme infinito? Ci sono
+insiemi più infiniti di altri?\\
+Per rispondere a queste domande dovremo approfondire il concetto di
+cardinalità/taglia di un insieme.
+
+\hypertarget{cardinalituxe0}{%
+\subsection{Cardinalità}\label{cardinalituxe0}}
+
+Prima di introdurre la definizione generale di cardinalità possiamo
+intanto affermare che: due insiemi \(A\), \(B\) \textbf{hanno la stessa
+cardinalità} se e solo se \textbf{esiste una biiezione fra \(A\) e
+\(B\)}.
+
+Notiamo che ``avere la stessa cardinalità'' è una relazione di
+equivalenza, ma sulla \textbf{classe} di tutti gli insiemi (che è
+appunto una classe, non un insieme). Nel procedere con le definizioni di
+numeri cardinali e cardinalità utilizzeremo perciò le classi. Sarebbe
+possibile fare lo stesso anche partendo da insiemi, ma sarebbe molto più
+complesso.
+
+\hypertarget{numeri-cardinali}{%
+\subsubsection{Numeri cardinali}\label{numeri-cardinali}}
+
+Sia \(U\) la \textbf{classe} di tutti gli insiemi. Un \textbf{numero
+cardinale} è un elemento di \(U_{/\equiv}\) dove \(\equiv\) è la
+relazione di equivalenza ``avere la stessa cardinalità''.
+
+Se l'insieme preso in considerazione è un insieme finito, il numero
+cardinale corrispondente utilizzerà la stessa notazione del numeri
+naturale che indica il numero di elementi di tale insieme.\\
+Se invece l'insieme è infinito il numero cardinale corrispondente
+(ovvero la classe di equivalenza di tale insieme) viene indicano con le
+lettere dell'alfabeto ebraico, come aleph (\(\aleph\)): la cardinalità
+di \(\mathbb{N}\) ad esempio è indicata con \(\aleph_0\)).
+
+\textbf{Nota:} la classe di equivalenza per l'insieme vuoto contiene
+solo il vuoto.
+
+\begin{examplebox}[Esempi]
+
+\[
+3 \overset{\mathrm{def}}{=} [\{\ 1, 2, 3\}]_\equiv = \{\{1, 2, 3\}, \{5, 2, 8\}, \{\emptyset, 3, \langle 1, 2 \rangle \}, \dots\}
+\] \[
+0 \overset{\mathrm{def}}{=} [\emptyset]_\equiv = \{\emptyset\}
+\] \[
+\aleph_0 \overset{\mathrm{def}}{=} [\mathbb{N}]_\equiv = \{\{n \in \mathbb{N} \mid n \text{ è pari }\}, \mathbb{Z}, \mathbb{Q} \dots \}
+\]
+
+\end{examplebox}
+
+Come possiamo vedere, il fatto che un insieme infinito sia un
+sottoinsieme di un altro \textbf{non vuol dire che essi abbiano
+cardinalità diverse}. Ad esempio \(\mathbb{N}\) è sottoinsieme di
+\(\mathbb{Z}\), ma in realtà hanno la stessa cardinalità (\(\aleph_0\)).
+
+\hypertarget{insiemi-enumerabili}{%
+\subsubsection{Insiemi enumerabili}\label{insiemi-enumerabili}}
+
+Gli insiemi che hanno come cardinalità \(\aleph_0\), sono detti
+\textbf{enumerabili}.
+
+È possibile dimostrare che \(\mathbb{Z}\) e \(\mathbb{Q}\) sono
+numerabili, mentre invece \(\mathbb{R}\) non lo è. Quest'ultima
+dimostrazione è stata formulata da Cantor, utilizzando il metodo di
+diagonalizzazione di Cantor.
+
+Si può addirittura arrivare a dimostrare l'esistenza di infinite diverse
+cardinalità di infiniti, e che l'insieme di queste è un infinito non
+enumerabile.
+
+\textbf{Nota:} tutte le funzioni che si possono scrivere in un
+linguaggio di programmazione sono enumerabili. Come conseguenza di ciò
+in informatica non è possibile implementare tutte le possibili funzioni.
+
+\hypertarget{definizione-di-cardinalituxe0}{%
+\subsubsection{Definizione di
+cardinalità}\label{definizione-di-cardinalituxe0}}
+
+Dato un insieme \(A\), si definisce \textbf{cardinalità} di \(A\) il
+\textbf{numero cardinale} \([A]_\equiv\) e la si indica con la seguente
+notazione: \[
+\mid A \mid
+\]
+
+\begin{examplebox}[Esempio]
+
+\[
+|\{1, 2, 3\} | = [\{\ 1, 2, 3\}]_\equiv = \{\{1, 2, 3\}, \{5, 2, 8\}, \{\emptyset, 3, \langle 1, 2 \rangle \}, \dots\} = 3
+\]
+
+\end{examplebox}
+
+\hypertarget{ordinamento-dei-numeri-cardinali}{%
+\subsubsection{Ordinamento dei numeri
+cardinali}\label{ordinamento-dei-numeri-cardinali}}
+
+In quanto utilizziamo i numeri cardinali per definire la taglia degli
+insiemi, vogliamo definire una relazione di ordinamento tra di essi, in
+modo da poter confrontare le diverse cardinalità.
+
+Siano \(x, y\) due numeri cardinali. Diremo che \(x \leq y\) se, dati
+due insiemi \(A\) e \(B\) tali che \(|A| = x \text{ e } |B| = y\) ,
+\textbf{esiste una iniezione tra \(A\) e \(B\)}. In particolare diremo
+che \(|A| \leq |B|\) se e solo se esiste una iniezione tra \(A\) e
+\(B\).
+
+Siano \(x, y\) due numeri cardinali. Diremo che \(x < y\) se,
+\(x \leq y\) e \(x \not = y\). In particolare diremo che \(|A| < |B|\)
+se e solo se esiste una iniezione e nessuna biiezione tra \(A\) e \(B\)
+.
+
+\begin{examplebox}[Esempi]
+
+\begin{itemize}
+\tightlist
+\item
+  \(2 = \left\lvert \{1, 2\} \right\rvert < \left\lvert \{a, b, c\} \right\rvert = 3\)
+  come testimoniato dall'iniezione \(1 \mapsto a, \, 2 \mapsto b\) e
+  dall'assenza di biezioni.
+\item
+  \(2 = \left\lvert \{1, 2\} \right\rvert < \left\lvert\mathbb{N}\right\rvert = \aleph_0\)
+  come testimoniato dall'iniezione \(1 \mapsto 1, \, 2 \mapsto 2\) e
+  dall'assenza di biezioni.
+\item
+  \(\lvert \mathbb{P} \rvert = \left\lvert \{n \in \mathbb{N} \mid n \, \text{è pari}\} \right\rvert \leq \left\lvert \mathbb{N} \right\rvert\)
+  come testimoniato dalla funzione identità che è una iniezione.
+\item
+  \(\lvert \mathbb{P} \rvert \not < \left\lvert \mathbb{N} \right\rvert\)
+  in quanto
+  \(\left\lvert \mathbb{P} \right\rvert = \left\lvert \mathbb{N} \right\rvert\)
+  come testimoniato dalla biezione
+  \(f(x) = 2 \cdot x, \, f \in \mathbb{N}^{\mathbb{P}}\)
+\end{itemize}
+
+\end{examplebox}
+
+\hypertarget{insiemi-finiti-e-infiniti}{%
+\subsection{Insiemi finiti e infiniti}\label{insiemi-finiti-e-infiniti}}
+
+Anche se intuitivamente possiamo intendere le differenze tra insiemi
+finiti e insiemi infiniti, cerchiamo di dare definizioni più rigorose.
+
+Innanzitutto chiameremo \textbf{finito} un insieme che \textbf{non è
+infinito}.
+
+Un insieme si dice invece \textbf{infinito} quando è \textbf{in
+biiezione con un suo sottoinsieme proprio}. Ovvero se \(A\) è un insieme
+e \(B\) un suo sottoinsieme proprio (\(B \subsetneq A\)), se
+\(|B| = |A|\) allora \(A\) è infinito.
+
+\hypertarget{teorema-di-cantor}{%
+\subsection{Teorema di Cantor}\label{teorema-di-cantor}}
+
+L'enunciato del teorema di Cantor è il seguente:
+
+sia \(T\) un insieme non vuoto. Allora la sua cardinalità è strettamente
+minore della cardinalità dell'\textbf{insieme delle parti di \(T\)},
+ovvero \(\left\lvert T \right\rvert < \left\lvert 2^T \right\rvert\) .
+
+Il corollario del teorema di Cantor invece dice che:
+
+sia \(T\) è un insieme con almeno due elementi. Allora la cardinalità di
+\(T\) è strettamente minore della cardinalità dello \textbf{spazio delle
+funzioni di \(T\)}, ovvero
+\(\left\lvert T \right\rvert < \left\lvert T^T \right\rvert\) .
+
+\newpage
+
+\hypertarget{semantica-classica}{%
+\section{Semantica classica}\label{semantica-classica}}
+
+Quando si studia la logica, ortogonalmente (indipendentemente) si
+scelgono una sintassi (che regole logiche) e una semantica (che
+significato hanno le parole). La semantica è proprio quella parte della
+linguistica che studia \textbf{il significato delle parole}.
+
+Come semantica quasi la totalità dei matematici (della matematica) usano
+la \textbf{semantica classica.}
+
+\hypertarget{terminologia}{%
+\subsection{Terminologia}\label{terminologia}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Connotazione}: una parte di frase (presa da un insieme di
+  possibili frasi) sintatticamente corretta, alla quale attribuisco un
+  significato.
+\item
+  \textbf{Denotazione}: il significato attribuito a una connotazione,
+  preso da un dominio di interpretazione.
+\item
+  \textbf{Dominio di interpretazione}: insieme di possibili significati.
+\item
+  \textbf{Sintassi}: descrizione dell'insieme di tutte le connotazioni.
+\item
+  \textbf{Interpretazione / (funzione) semantica}: funzione che associa
+  a ogni connotazione una denotazione in un dominio di interpretazione
+  fissato
+\end{itemize}
+
+In caso di ragionamento ipotetico, ogni possibile \textbf{mondo} (=
+configurazione: interpretazioni diverse per la stessa connotazione) ha
+una semantica associata.
+
+Si possono quindi dare semantiche totalmente diverse allo stesso
+linguaggio.\\
+In genere c'è una semantica ``naturale'' o ``principale'', detta
+\textbf{semantica intesa} (quella che si intende se non si precisa
+nulla, qualcosa su cui ci si è accordati). Le altre semantiche sono
+dette \textbf{alternative}.
+
+\hypertarget{semantica-classica-della-logica-proposizionale}{%
+\subsection{Semantica classica della logica
+proposizionale}\label{semantica-classica-della-logica-proposizionale}}
+
+La \textbf{logica proposizionale} è la logica, già vista in precedenza,
+in cui ogni connotazione può denotare un valore di verità.
+
+Come già detto però a una logica va associata anche una semantica.
+Vediamo come la semantica classica si applica alla logica
+proposizionale:
+
+\begin{itemize}
+\tightlist
+\item
+  A ogni denotazione viene associato il suo \textbf{valore di verità} in
+  un qualche mondo: il valore di verità non è assoluto, ma relativo a un
+  mondo (fissato in ogni mondo, ma da mondo a mondo può cambiare).
+\item
+  Il mondo determina il valore di verità delle variabili proposizionali
+  \(A\), \(B\), \ldots{} . Ogni mondo avrà quindi i propri valori di
+  verità per ogni possibile variabile.
+\item
+  La semantica dei connettivi (\(\land , \Rightarrow , \dots\)) è invece
+  \textbf{fissata}, non determinata dal mondo.
+\item
+  Quando si assume la semantica classica, la logica si dice
+  \textbf{logica proposizionale classica}.
+\end{itemize}
+
+\hypertarget{logica-classica}{%
+\subsection{Logica classica}\label{logica-classica}}
+
+Fissata la semantica (classica) bisogna però anche capire cosa vuol dire
+essere vero, \textbf{cos'è la verità}.\\
+La \textbf{logica classica} segue la visione Platonica del mondo: esiste
+un mondo delle idee perfetto e queste regole di verità descrivono tale
+mondo perfetto. In particolare per ogni mondo (preso singolarmente) vale
+che:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Ogni enunciato è \textbf{vero o falso}: siamo in un piano
+  deterministico e non probabilistico, non sono ammesse sfumature di
+  significato (valori di verità diversi), ma solo due distinti valori di
+  verità.
+\item
+  Un enunciato non può essere vero e falso allo stesso tempo:
+  \textbf{principio di non contraddizione}. Questo vale anche nelle
+  logiche probabilistiche, dove la ``somma'' dei valori di verità deve
+  essere sempre 1. Nelle logiche che invece permettono la
+  contraddizione, il ragionamento logico diventa argomentazione (teoria
+  dell'argomentazione).
+\item
+  Il valore di verità non muta: \textbf{principio di staticità}. Visione
+  deterministica e statica del mondo.
+\item
+  Il valore di verità di un enunciato è sempre determinato:
+  \textbf{principio di determinatezza}. Ad esempio per la matematica
+  questo principio dipende dalla visione che il matematico segue:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    la matematica è già tutta esistente: il matematico la ``scopre''
+  \item
+    inizialmente non esistono dei concetti, sono indeterminati: il
+    matematico la ``crea''
+  \end{itemize}
+\end{enumerate}
+
+Analizziamo i punti:
+
+\begin{itemize}
+\tightlist
+\item
+  1 e 2 determinano il \textbf{dominio di interpretazione classico}:
+  \(\{0, 1\}\). Gli elementi di tale insieme rappresentano le notazioni
+  classiche di verità e falsità: si potrebbe scegliere un qualunque
+  insieme con due elementi, ma vengono utilizzati 0 e 1 per 3 motivi:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    si evita di fare errori tarskiani (ad empio ambiguità con le parole
+    vero e falso).
+  \item
+    sui numeri ho delle operazioni matematiche che è possibile usare per
+    dare significato ai connettivi logici.
+  \item
+    questa scelta scala a logiche diverse: facile conversione ad esempio
+    l'intervallo aperto \([0, 1]\) nelle logiche probabilistiche.
+  \end{itemize}
+\item
+  3 e 4 determinano che un dominio \textbf{non muta}: ogni formula
+  logica deve aver associato un valore di verità che non cambia. Questo
+  viene rappresentiamo con una funzione (matematica): \textbf{una
+  (funzione di) interpretazione (classica) o mondo} è una funzione
+  dall'insieme delle variabili proposizionali \(\{A, B, . . .\}\) verso
+  \(\{0, 1\}\)
+\end{itemize}
+
+Al di fuori della logica classica i punti 3 e 4 sono spesso falsi (es.
+in logica intuizionista), in quando parlano di staticità e immutabilità
+della verità.
+
+Indichiamo le interpretazioni (mondi) con \(v\), \(v'\), \(v_1\),
+\(v_2\) \ldots.
+
+Cambiare mondo vuol dire cambiare la funzione che associa alle variabili
+i valori 0 e 1.
+
+Essendo la sintassi definita in modo ricorsivo, una formula
+sintatticamente corretta non è semplicemente una stringa, ma un albero.
+L'albero associato a una formula si chiama \textbf{albero di sintassi
+astratta}. Ogni sotto-albero corrisponde a una sotto-formula.
+
+Per calcolare il valore di verità di una formula si procede per
+ricorsione: parto dalle foglie (A, B, C \ldots) di cui so già i valori
+di verità, poi salgo componendo i risultati precedenti (prima calcolo il
+sotto-albero di sinistra, poi quello di destra, poi combino i
+risultati). Questo processo permette, grazie alla \textbf{ricorsione
+strutturale}, di calcolare il valore di verità espresso da un albero.
+
+Per ricorsione strutturale possiamo anche definire il valore di verità
+di una formula (in logica classica).\\
+Usiamo le doppie parentesi quadre \([[]]\) per passare dalla sintassi
+alla semantica (es. ``La semantica di un certo mondo \(v\) è definita
+nel seguente modo\ldots{}'').
+
+Data un'interpretazione (o mondo) \(v\) , la semantica
+\([[·]]^v : F \to \{0, 1\}\), è definita per ricorsione strutturale
+sulle connotazioni come segue:
+
+\[
+\begin{aligned}
+\;[[\bot]]^v &&& = 0\\[6pt]
+\;[[\top]]^v &&& = 1\\[6pt]
+\;[[A]]^v &&& = v(A)\\[6pt]
+\;[[\neg F]]^v &&& = 1 - [[F]]^v\\[6pt]
+\;[[F_1 \land F_2]]^v &&& = min\{[[F_1]]^v, [[F_2]]^v\} \\[6pt]
+\;[[F_1 \lor F_2]]^v &&& = max\{[[F_1]]^v, [[F_2]]^v\} \\[6pt]
+\;[[F_1 \Rightarrow F_2]]^v &&& = max\{1 - [[F_1]]^v, [[F_2]]^v\} \\[6pt]
+\end{aligned}
+\]
+
+Un mondo \(v\) è una funzione che associa a ogni parametro un valore o
+\(0\) o \(1\), quindi \(v(A)\) vuol dire il valore di \(A\) nel mondo
+\(v\) .
+
+\hypertarget{conseguenza-logica}{%
+\subsection{Conseguenza logica}\label{conseguenza-logica}}
+
+\(\Gamma\) rappresenta un insieme di affermazioni, ipotesi.
+
+Definizione: \(\Gamma \Vdash F\) (\(F\) è \textbf{conseguenza logica} di
+\(\Gamma\)) quando per ogni mondo \(v\) si ha che, se \([[G]]^v = 1\)
+per ogni \(G \in \Gamma\), allora \([[F ]]^v = 1\)
+
+ovvero quando:
+
+\begin{itemize}
+\tightlist
+\item
+  Se il minimo dell'insieme dei valori di verità (delle formule in
+  \(\Gamma\)) vale 1, allora il valore di verità di \(F\) deve valere 1.
+\item
+  \(F\) vale in tutti quei mondi in cui tutte le formule di \(\Gamma\)
+  valgono.
+\item
+  L'insieme dei mondi in cui tutte le formule di \(\Gamma\) valgono è un
+  sottoinsieme di quello in cui vale \(F\) : ogni ipotesi è un filtro,
+  riduce il campo di interesse.
+\item
+  Se l'intersezione di tali mondi è vuota, le ipotesi sono inconsistenti
+  ed essendo che il vuoto è sottoinsieme di ogni cosa, \(F\) vale.
+  Infatti ogni cosa è conseguenza logica di un insieme di ipotesi
+  inconsistenti.
+\item
+  Più formule (ipotesi) metto più aumentano le conseguenze logiche, ma
+  queste si applicano in sempre meno casi. Ottengo situazioni più
+  specifiche, ma posso dimostrare più cose.
+\end{itemize}
+
+\newpage
+
+\hypertarget{semantica-intuizionista}{%
+\section{Semantica intuizionista}\label{semantica-intuizionista}}
+
+\hypertarget{introduzione}{%
+\subsection{Introduzione}\label{introduzione}}
+
+La semantica non della verità platonica, ma dell'evidenza (qualcosa che
+mi convince).\\
+La semantica della conoscenza diretta del fenomeno.\\
+La semantica della calcolabilità (posso risolvere un problema con un
+programma): semantica degli informatici
+
+Anche la visione della matematica cambia a seconda della logica usata:
+
+\begin{itemize}
+\tightlist
+\item
+  la matematica è una scoperta per la logica classica
+\item
+  la matematica è un'invenzione per la logica intuizionista
+\end{itemize}
+
+Nella semantica classica sapere che c'è un risultato (la verità) non
+implica sapere cos'è (conoscenza della verità): si parla quindi di
+\textbf{evidenza indiretta}.\\
+Nella semantica intuizionista è invece importante avere
+un'\textbf{evidenza diretta}.
+
+Facciamo un esempio con la formula \(\exists x. P(x)\) :
+
+\begin{itemize}
+\tightlist
+\item
+  in logica classica non interessa sapere qual'è quel \(x\) tale che
+  \(P(x)\), basta sapere che esiste.
+\item
+  in logica intuizionista si vuole invece avere un algoritmo che
+  permetta di trovare tale \(x\).
+\end{itemize}
+
+Per questo in tutte le dimostrazioni intuizioniste del tipo: ``per ogni
+input esiste un output in relazione con l'input'', è presente un
+algoritmo che calcola l'output a partire dall'input.\\
+Una dimostrazione classica invece dice solo che l'output esiste, non
+spiega come calcolarlo.
+
+Come già visto, nella semantica classica:
+
+\begin{itemize}
+\tightlist
+\item
+  Il valore di verità di ogni enunciato è sempre determinato
+\item
+  Il valore di verità di ogni enunciato è immutabile
+\end{itemize}
+
+Queste ipotesi descrivono però un mondo platonico e perfetto, ma non
+sono appropriate per la descrizione della conoscenza e per mondi non
+deterministici.
+
+Perciò, nelle semantiche intuizioniste:
+
+\begin{itemize}
+\tightlist
+\item
+  Il valore di verità di ogni enunciato è determinato solo quando se ne
+  ha una prova/evidenza \textbf{diretta} (un \textbf{algoritmo}).
+\item
+  Il valore di verità di ogni enunciato può passare in maniera monotona
+  dall'essere indeterminato all'avere un determinato valore che non
+  cambia più (scopro almeno un algoritmo o dimostro che non può esserci)
+\end{itemize}
+
+Ci sono però problemi per i quali un algoritmo può dimostrare solo uno
+dei due possibili stati di verità: nell'altro caso non terminerebbero
+mai
+
+\hypertarget{semantiche}{%
+\subsection{Semantiche}\label{semantiche}}
+
+Esistono due principali semantiche per la logica intuizionista:
+
+\begin{itemize}
+\item
+  \textbf{Semantica alla Kripke (o dei mondi possibili)}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Continua a usare due valori (l'insieme \(\{0, 1\}\)), ma con
+    significato diverso: 1 = so che è vero, 0 = indeterminato. Una
+    formula \(A\) è falsa quando \(\neg A\) vale 1, non quando \(A\)
+    vale 0.
+  \item
+    I mondi continuano ad essere delle funzioni che assegnano alle
+    variabili una denotazione 0 o 1. Ma a differenza della logica
+    classica i mondi possono evolvere: posso passare da un mondo in cui
+    \(v(A) = 0\) a un mondo \(v'\) uguale a \(v\) tranne per il fatto
+    che \(v'(A) = 1\) .
+  \item
+    Tanti modi possibili in evoluzione possibile (l'evoluzione non è
+    dovuta al tempo, ma alla conoscenza).
+  \item
+    Essendo che il valore 0 non indica il falso, ma la non conoscenza,
+    non è vero il principio del terzo escluso:
+    \(v \not \Vdash A \lor \neg A\), se \(v(A) = 0\)
+  \item
+    Le denotazioni \(\{0, 1\}\) sono livelli di conoscenza, non
+    algoritmi.
+  \end{itemize}
+\item
+  \textbf{Semantica di Brouwer-Heyting-Kolmogorov}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Una formula \(F\) è la descrizione di un problema, di un programma.
+  \item
+    A ogni problema \(F\) associo l'\textbf{insieme di evidenze}, ovvero
+    l'\textbf{insieme di algoritmi conosciuti} per il problema \(F\) .
+  \item
+    Insieme vuoto = assenza di algoritmi \(\approx\) falsità
+  \item
+    Insieme non vuoto = almeno un algoritmo \(\approx\) verità
+  \item
+    Un connettivo compone problemi più complessi a partire da problemi
+    più semplici
+  \item
+    La denotazione di un connettivo è un insieme di algoritmi che
+    risolvono il problema composto usando gli algoritmi per i problemi
+    semplici
+  \end{itemize}
+\end{itemize}
+
+Useremo la semantica di Brouwer-Heyting-Kolmogorov
+
+Definizioni:
+
+\[
+\begin{aligned}
+\; [[\bot]]^v & = \emptyset \\[6pt]
+\; & \text{nessun algoritmo per risolvere } \bot \\[6pt]
+\; [[\top]]^v & = \{*\} \\[6pt]
+\; & \top \text{e' un problema banale che * puo' risolvere} \\[6pt]
+\; [[A]]^v & = v(A) & \\[6pt]
+\; & \text{l'insieme di algoritmi che risolvono } A \\[6pt]
+\; [[F \land G]]^v & = [[F]]^v \times [[G]]^v \\[6pt] 
+\; & \text{ prodotto cartesiano: coppie di un algoritmo per F e uno per G} \\[6pt]
+[[F \lor G]]^v & = [[F]]^v \oplus [[G]]^v  \\[6pt]
+\; & \text{ unione disgiunta: risolvere uno dei due problemi, dicendo quale} \\[6pt]
+\; & \text{ coppie con un booleano e un un algoritmo (0 = algoritmo per F, 1 = algoritmo per G)} \\[6pt]
+\;[[F \Rightarrow G]]^v & = [[G]]^{v^{[[F]]^v}} \\[6pt]
+\; & \text{ trovare un algoritmo per risolvere G, sapendo l'algoritmo risolutivo di F} \\[6pt]
+\end{aligned}
+\]
+
+\hypertarget{decidibilituxe0-correttezza-e-completezza}{%
+\subsection{Decidibilità, correttezza e
+completezza}\label{decidibilituxe0-correttezza-e-completezza}}
+
+Una proposizione è \textbf{decidibile} se esiste una algoritmo che ci
+dice se essa è vera o falsa. In generale però in logica intuizionista
+\(\not \Vdash A \lor \neg A\), ovvero non vale l'excluded middle.
+
+\textbf{Teorema}: per ogni \(\Gamma, F\) , se \(\Gamma \Vdash F\) in
+logica intuizionista allora \(\Gamma \Vdash F\) anche in logica classica
+(non è però sempre vero il contrario, in quanto la logica classica ci
+parla solo dell'esistenza della verità, non di come trovarla)
+
+\textbf{Teorema (correttezza)}: per ogni \(\Gamma, F\) , se
+\(\Gamma \vdash F\) senza usare il ragionamento per assurdo (RAA) allora
+\(\Gamma \Vdash F\) in logica proposizionale intuizionista.
+
+\textbf{Teorema (completezza debole)}: per ogni insieme finito di
+formule \(\Gamma\) e per ogni \(F\) , se \(\Gamma \Vdash F\) in logica
+proposizionale intuizionista allora \(\Gamma \vdash F\) senza usare la
+RAA.
+
+\newpage
+
+\hypertarget{deduzione-naturale}{%
+\section{Deduzione naturale}\label{deduzione-naturale}}
+
+Per studiare le \textbf{prove} bisogna prima introdurne una definizione
+rigorosa. Una possibilità della definizione di prova sono gli
+\textbf{alberi di deduzione naturale}, che sono un \textbf{dato} che
+rappresenta una prova.
+
+\hypertarget{logica-proposizionale}{%
+\subsection{Logica proposizionale}\label{logica-proposizionale}}
+
+La \textbf{logica proposizionale} è quella logica, meno ricca di quella
+vista finora, che studia solo alcune formule logiche. La studiamo non
+per fare teoremi matematici ma perché ha anche tante applicazioni in
+informatica.
+
+Non tutto ciò che si può scrivere è una \textbf{proposizione} (es. ``2''
+non è una proposizione): una proposizione è qualcosa che \textbf{vale} o
+\textbf{non vale} (qualunque sia il significato di valere).
+
+Sintassi della logica:
+
+\begin{itemize}
+\item
+  \(\bot\) (``bottom'' / ``falso'' / ``assurdo''): rappresenta ciò che
+  \textbf{non vale mai}
+\item
+  \(\top\) (``top'' / ``vero''): rappresenta la verità, che \textbf{vale
+  sempre}.
+\item
+  \(A, B, \dots\) sono \textbf{variabili proposizionali} che
+  rappresentano qualcosa che \textbf{può o meno valere}. La loro
+  ``risposta'' non è univoca, ma dipende dalle ipotesi
+\item
+  \(\neg F_1\) (``non''): \textbf{negazione} di \(F_1\)
+\item
+  \(F_1 \land F_2\) (``e''): \textbf{congiunzione} di \(F_1\) e \(F_2\)
+\item
+  \(F_1 \lor F_2\) (``o''): \textbf{disgiunzione (non esclusiva)} di
+  \(F_1\) e \(F_2\)
+\item
+  \(F_1 \Rightarrow F_2\) (``se\ldots allora''): \textbf{implicazione}
+  fra \(F_1\) e \(F_2\)
+\end{itemize}
+
+\begin{examplebox}[Nota]
+
+Il concetto di ``\textbf{valere}'' non è ancora definito.
+
+\end{examplebox}
+
+\(\neg\) è un \textbf{connettivo unario}, \(\lor , \land , \Rightarrow\)
+sono \textbf{connettivi binari}, mentre \(\top , \bot\) sono
+\textbf{connettivi 0-ari} o anche detti \textbf{costanti}.
+
+Per convenzione i connettivi binari sono \textbf{associativi a destra}.
+Inoltre \(\neg\) ha la precedenza su \(\land\) che ha precedenza su
+\(\lor\) che ha precedenza su \(\Rightarrow\).
+
+\begin{examplebox}[Esempio]
+
+\[
+A \land B \Rightarrow \neg C \lor A \quad \text{ significa } \quad(A \land B) \Rightarrow ((\neg C) \lor A)
+\]
+
+\end{examplebox}
+
+Già così la logica proposizionale permette di catturare molti
+ragionamenti validi. Più avanti però introdurremo logiche più ricche,
+più complete che fanno uso anche di \textbf{quantificatori, predicati,
+funzioni, costanti e variabili}.
+
+\textbf{Formalizzare} una proposizione/frase/testo significa tradurla in
+\textbf{formule logiche}. Il processo di formalizzazione però non sempre
+è possibile o ovvio e spesso è approssimato. Inoltre un enunciato
+formalizzato cattura \textbf{un'intera famiglia di ragionamenti
+informali con la stessa struttura logica}, ovvero esso è un ragionamento
+universalmente valido in tali istanze.
+
+\begin{examplebox}[Esempio]
+
+Consideriamo la seguente frase:\\
+\emph{``Se oggi piove allora prendo l'ombrello, se prendo l'ombrello non
+mi bagno. Quindi se oggi piove allora non mi bagno''} Possiamo
+formalizzarla nel seguente \textbf{enunciato} (che è dimostrabile): \[
+(P \Rightarrow O) \land (O \Rightarrow \neg B) \Rightarrow P \Rightarrow \neg B
+\] Notiamo però che l'enunciato così posto non si riferisce unicamente
+alla frase di partenza, ma all'intera famiglia di ragionamenti con
+quella struttura. Ad esempio anche la seguente frase può essere
+rappresentato da tale enunciato:\\
+\emph{``Se x è un multiplo di 4 allora 4 divide x, se 4 divide x allora
+x non è dispari. Quindi se x è un multiplo di 4 allora x non è
+dispari''}
+
+\end{examplebox}
+
+\hypertarget{alberi-di-deduzione-naturale}{%
+\subsection{Alberi di deduzione
+naturale}\label{alberi-di-deduzione-naturale}}
+
+In logica, come in informatica, un \textbf{albero} è una
+\textbf{struttura dati} composta da \textbf{nodi}, collegati tra loro
+tramite \textbf{archi}, a partire da un nodo iniziale detto
+\textbf{radice}. I nodi che non presentano ulteriori ramificazioni sono
+detti \textbf{foglie}.
+
+Un altro modo di interpretare la struttura ad albero consiste nel
+considerare le ramificazioni non semplicemente come collegamenti a nodi
+successivi, ma come connessioni a \textbf{sotto-alberi}. Ogni
+sotto-albero possiede a sua volta una radice e, eventualmente, ulteriori
+sotto-alberi discendenti. Le radici dei sotto-alberi che sono privi di
+ulteriori sotto-alberi coincidono pertanto con le foglie. Ne segue che
+un albero può essere definito \textbf{ricorsivamente} come:
+
+\begin{itemize}
+\item
+  una foglia (equivalente a una radice), oppure
+\item
+  un nodo che si ramifica in uno o più sotto-alberi.
+\end{itemize}
+
+Per questo motivo, la struttura degli alberi è detta \textbf{ricorsiva}.
+
+\begin{figure}[h]
+    \centering
+    \begin{tikzpicture}[
+      level distance=1.0cm,
+      sibling distance=2.0cm,
+      every node/.style = {shape=circle, draw}
+    ]
+    \node {A}
+      child { node {B}
+        child { node {D} }
+        child { node {E} }
+      }
+      child { node {C}
+        child { node {F}
+          child { node {G} }
+          child { node {H} }
+        }
+      };
+    \end{tikzpicture}
+    \caption{Esempio di albero in informatica con radice A e ramificazioni in sotto-alberi.}
+\end{figure}
+
+La stessa idea ricorsiva può essere applicata alle
+\textbf{dimostrazioni}: a ogni passaggio ci si trova in una nuova
+sotto-dimostrazione, che può eventualmente suddividersi in ulteriori
+sotto-dimostrazioni, e così via. Per lavorare con questa
+rappresentazione delle dimostrazioni utilizzeremo perciò quelli che
+vengono chiamati \textbf{alberi di deduzione naturale}.
+
+Gli \textbf{alberi di deduzione naturale} sono strutture dati analoghe a
+quelle utilizzate in informatica. Tuttavia, in analogia con le
+rappresentazioni botaniche, si tende a rappresentare la radice
+(\textbf{top}) nella parte inferiore e le foglie (\textbf{bottom}) nella
+parte superiore dell'albero. Sono dunque presenti ramificazioni e
+foglie, tutte considerate come nodi; le foglie si distinguono in quanto
+nodi privi di ulteriori ramificazioni.
+
+A ogni nodo viene associata un'informazione (una formula), e lo stesso
+vale per le ramificazioni. La costruzione di un albero di deduzione
+parte da una radice, corrispondente a una formula \(F\). Le
+ramificazioni sono rappresentate tramite linee orizzontali: sopra
+ciascuna di esse compaiono zero o più altre formule.
+
+Procedendo ricorsivamente da queste formule, si generano ulteriori
+ramificazioni e nodi; alcune di queste formule costituiranno
+eventualmente foglie. Una linea orizzontale che non presenta formule
+superiori indica una ramificazione nel ``nulla'': questa situazione non
+corrisponde a una foglia.
+
+\begin{figure}[h]
+\centering
+\begin{scaledprooftree}{.95}
+  \def\defaultHypSeparation{\hskip 0.4 cm}
+
+  \AxiomC{$[A \land (B \Rightarrow C)]$}
+    \RightLabel{$\land e_2$}
+    \UnaryInfC{$B \Rightarrow C$}
+
+  \AxiomC{$B$}
+
+  \RightLabel{$\Rightarrow e$}
+  \BinaryInfC{$C$}
+
+  \RightLabel{$\Rightarrow i$}
+  \UnaryInfC{$A \land (B \Rightarrow C) \Rightarrow C$}
+
+\end{scaledprooftree}
+\caption{Esempio di albero di deduzione naturale.}
+\end{figure}
+
+Un albero di deduzione naturale viene utilizzato per dimostrare una
+proposizione del seguente tipo: \[
+    \Gamma \vdash F
+\] dove \(\Gamma\) è un insieme di formule (\(I_1, I_2,\dots, I_n \;\)),
+dette \textbf{ipotesi}, \(\vdash\) è il simbolo con il significato di
+``\textbf{deriva}'' (si legge ``\(\Gamma\) deriva \(F\)'' o ``\(F\)
+derivato da \(\Gamma\)'') e \(F\) è una formula che rappresenta la
+conclusione da dimostrare.
+
+Un albero per essere una dimostrazione di \(\Gamma \vdash F\) deve avere
+le seguenti proprietà:
+
+\begin{itemize}
+\item
+  Tutti i nodi sono etichettati con delle formule
+\item
+  Le foglie possono essere di due tipi:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Formule scaricate} (cancellate). Vengono indicate tra
+    parentesi quadre e rappresentano \textbf{ipotesi locali} di una
+    sotto-dimostrazione
+  \item
+    Formule non scaricate, in tal caso rappresentando \textbf{ipotesi
+    globali}
+  \end{itemize}
+\item
+  La radice deve essere ciò che si deve dimostrare (\(F\))
+\item
+  Le foglie non scartate (globali) devono essere un \textbf{sottoinsieme
+  delle ipotesi di partenza} (gamma)
+\item
+  Le ramificazioni hanno delle etichettano che rappresentano il nome
+  della \textbf{regola di inferenza} utilizzata.
+\end{itemize}
+
+\hypertarget{sintassi-per-le-regole-di-inferenza}{%
+\subsection{Sintassi per le regole di
+inferenza}\label{sintassi-per-le-regole-di-inferenza}}
+
+Per le regole di inferenza viene usata la seguente sintassi:
+
+\[
+\begin{matrix} 
+F_1 \dots F_n \\
+\hline
+F
+\end{matrix}
+\] La formula \(F\) rappresenta la \textbf{conclusione} della regola.\\
+Le formule \(F_1, \dots , F_n\) sono le \textbf{premesse} della
+regola.\\
+A fianco della riga viene indicato il nome della regola.
+
+Inoltre con la sintassi
+
+\[
+\begin{matrix} 
+[A] \\
+\vdots \\
+F_i
+\end{matrix}
+\]
+
+viene indicato che è possible assumere localmente \(A\) per concludere
+la premessa \(F_i\). \(A\) sarà quindi un'ipotesi scaricata e potrà
+essere usata solo in quel ramo della dimostrazione.
+
+Una regola senza ipotesi (n = 0) viene chiamata \textbf{assioma},
+rappresenta una regola assoluta.
+
+Gli alberi di deduzione naturali si compongono ricorsivamente dalle
+\textbf{regole di inferenza}, creando delle sotto-dimostrazioni.\\
+La struttura ricorsiva permette di definire \textbf{funzioni per
+ricorsione strutturale} su alberi di deduzione e di effettuare
+\textbf{prove per induzione strutturale} (per dimostrare che la
+dimostrazione è corretta).
+
+Ci sono due tipi di passi di inferenza:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Regole di introduzione}: determinano tutti i modi in cui è
+  possibile concludere una formula con in testa un determinato
+  connettivo. ``Come concludo\ldots{} ?''
+\item
+  \textbf{Regole di eliminazione}: determinano i modi in cui è possibile
+  utilizzare un'ipotesi con in testa un determinato connettivo. ``Cosa
+  ricavo da\ldots{} ?''
+\end{itemize}
+
+Ogni singola regola (e di conseguenza ogni albero), ammette sempre due
+diverse letture:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Top-down}: dalla conclusione alle premesse (negli alberi
+  quindi dalla radice a salire verso le foglie). ``Per concludere \(F\)
+  posso ridurmi a dimostrare \(F_1 \dots F_n\)''
+\item
+  \textbf{Bottom-up}: dalle premesse all conclusione. ``Date le premesse
+  \(F_1 \dots F_n\) poso concludere \(F\)''
+\end{itemize}
+
+Spesso nel leggere un albero (una dimostrazione) si usa una lettura
+mista: delle parti parti top-down, delle parti bottom-up.\\
+I matematici di solito lavorano in modo top down (partono da ciò che
+devono dimostrare), infatti è più facile, poiché avendo una sola
+conclusione le possibilità spesso sono limitate. Però poi quando il
+matematico presenta la dimostrazione, lo fa in modo bottom up
+
+\hypertarget{correttezza-delle-regole-di-inferenza}{%
+\subsection{Correttezza delle regole di
+inferenza}\label{correttezza-delle-regole-di-inferenza}}
+
+Una regola \(\begin{matrix} F_1 \dots F_n \\\hline H\end{matrix}\)
+(\emph{nome}) è \textbf{corretta} quando \(F_1, \dots , F_n \Vdash H\)
+.\\
+Il simbolo \(\Vdash\) rappresenta una \textbf{conseguenza logica} ed è
+diverso da \(\vdash\) . Una forma del tipo \(\Gamma \Vdash F\) si legge
+come ``\(F\) è una conseguenza logica di \(\Gamma\)'' e significa che
+``in tutti quei casi in cui valgono tutte le formule in \(\Gamma\) si ha
+che \(F\) vale''. In quanto il significato di ``\textbf{valere}'' cambia
+da logica a logica, il significato della conseguenza logica cambia da
+logica a logica.\\
+\(\Vdash\) non rappresenta una dimostrazione, ma un fatto naturale,
+sempre vero.
+
+Inoltre se una premessa contempla ipotesi scaricate, esse vanno
+integrate tramite \textbf{implicazioni} nella formula finale.
+
+\begin{examplebox}[Esempio]
+
+\[
+\begin{matrix} 
+&&[F] \\
+&&\vdots \\
+E && G \\
+\hline
+& H 
+\end{matrix}
+\] Questa formula è corretta quando \(E, F \Rightarrow G \Vdash H\)
+
+\end{examplebox}
+
+Quindi una regola corretta \textbf{dimostra solo conseguenze logiche}.
+
+\hypertarget{invertibilituxe0-delle-regole}{%
+\subsection{Invertibilità delle
+regole}\label{invertibilituxe0-delle-regole}}
+
+Una regola \(\begin{matrix} F_1 \dots F_n \\\hline F\end{matrix}\) è
+\textbf{invertibile} quando per ogni \(i\) si ha che \(F\) ha come
+\textbf{conseguenza logica} \(F_i\) (\(F \Vdash F_i\)). Inoltre come per
+la completezza, eventuali ipotesi scaricate (p.e. \(H\)) di \(F_i\)
+vanno integrate con una implicazione (es. \(F \Vdash H \Rightarrow F_i\)
+).\\
+In pratica l'invertibilità ci dice che \textbf{se vale la conclusione
+valgono anche le premesse}.
+
+L'invertibilità è importante nella ricerca delle prove, in quanto una
+regola invertibile può essere applicata nella ricerca top-down in
+maniera sicura, in quanto sarà sempre la scelta corretta. È quindi
+importante ricordarsi quali regole sono invertibili e quali no.\\
+Ciò non vuol dire che una regola non invertibile non sia corretta, ma
+che, se applicata al momento sbagliato, potrebbe portare a una formula
+impossibile da dimostrare.\\
+Per questo motivo, se ci si trova in un vicolo cieco durante una
+dimostrazione, bisogna fare backtracking e provare ad applicare un'altra
+regola, ma solo per le regole non invertibili, in quanto quelle
+invertibili sappiamo essere corrette sempre.
+
+In alcuni casi certe premesse potrebbero essere conseguenza logica di
+\(F\), mentre altre no: in questi casi la regola si dice
+\textbf{parzialmente invertibile}.
+
+\hypertarget{derivabilituxe0-delle-regole}{%
+\subsection{Derivabilità delle
+regole}\label{derivabilituxe0-delle-regole}}
+
+Un insieme di regole \(\mathcal{R}\) è \textbf{derivabile} a partire da
+un insieme di regole \(\mathcal{S}\) quando per ogni regola
+\(\begin{matrix} F_1 \dots F_n \\\hline F\end{matrix}\) in
+\(\mathcal{R}\) si ha che \(F_1, \dots, F_n \vdash F\) usando solamente
+le regole in \(\mathcal{S}\).
+
+La derivabilità ci permette, per risolvere un problema, di ridurci a
+risolverne un altro, infatti il \textbf{teorema della derivabilità} dice
+che:\\
+se \(\mathcal{R}\) è derivabile a partire da \(\mathcal{S}\) allora per
+ogni dimostrazione ottenuta usando solo regole in \(\mathcal{R}\) esiste
+una dimostrazione con le stesse premesse e conclusione che usa solo
+regole in \(\mathcal{S}\).
+
+\hypertarget{regole-di-dimostrazione-1}{%
+\subsection{Regole di dimostrazione}\label{regole-di-dimostrazione-1}}
+
+Le regole di dimostrazione sono corrette rispetto a una certa logica che
+va dichiarata.
+
+\hypertarget{introduzione-di-land}{%
+\subsubsection{\texorpdfstring{Introduzione di
+\(\land\)}{Introduzione di \textbackslash land}}\label{introduzione-di-land}}
+
+Regola \(\land_i\) : \[
+\begin{matrix} 
+F_1 \quad \quad F_2 \\
+\hline
+F_1 \land F_2 \\
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: se vale \(F_1\) e vale \(F_2\) allora vale
+\(F_1 \land F_2\) .
+
+\textbf{Lettura top-down}: per dimostrare \(F_1 \land F_2\) debbo
+dimostrare sia \(F_1\) che \(F_2\) (dividiamo la dimostrazione in due
+sotto-dimostrazioni).
+
+\textbf{La regola è invertibile}.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{eliminazione-di-land}{%
+\subsubsection{\texorpdfstring{Eliminazione di
+\(\land\)}{Eliminazione di \textbackslash land}}\label{eliminazione-di-land}}
+
+Regola \(\land_e\) : \[
+\begin{matrix} 
+&&[F_1]  [F_2] \\
+&&\vdots \\
+F_1 \land F_2 && F_3 \\
+\hline
+& F_3 
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: se vale \(F_1 \land F_2\) e se ipotizzando
+\(F_1\) e \(F_2\) concludo \(F_3\), allora vale \(F_3\).
+
+\textbf{Lettura top-down}: per dimostrare \(F_3\) data l'ipotesi
+\(F_1 \land F_2\) è sufficiente dimostrare \(F_3\) sotto le ipotesi
+\(F_1\) e \(F_2\) (che quindi saranno ipotesi scaricate)
+
+Mettendo le ipotesi scaricate non ci si sta restringendo a dei
+sotto-casi, in quando tali ipotesi scaricate sono già implicite
+nell'ipotesi di partenza.
+
+La regola normalmente \textbf{non è invertibile}, ma lo diventa se si
+assume \(F_1 \land F_2\) (ad esempio se è un'ipotesi che abbiamo).
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{regole-alternative-di-eliminazione-di-land}{%
+\subsubsection{\texorpdfstring{Regole alternative di eliminazione di
+\(\land\)}{Regole alternative di eliminazione di \textbackslash land}}\label{regole-alternative-di-eliminazione-di-land}}
+
+Esistono altre due regole di eliminazione di \(\land\): in alcune
+logiche sono le uniche possibili.
+
+Regola \(\land_{e_1}\): \[
+\begin{matrix} 
+F_1 \land F_2 \\
+\hline
+F_1 \\
+\end{matrix}
+\]
+
+Regola \(\land_{e_2}\): \[
+\begin{matrix} 
+F_1 \land F_2 \\
+\hline
+F_2 \\
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: se vale \(F_1 \land F_2\) allora vale
+\(F_1\) (\(F_2\))
+
+\textbf{Lettura top down:} per dimostrare \(F_1\) ( \(F_2\)) basta
+dimostrare \(F_1 \land F_2\)
+
+Queste \textbf{non sono invertibili}.
+
+\textbf{Teorema}: l'insieme di regole \(\{\land_{e_1} , \land_{e_2} \}\)
+è derivabile a partire dall'insieme \(\{\land_e\}\) e viceversa.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{introduzione-di-lor}{%
+\subsubsection{\texorpdfstring{Introduzione di
+\(\lor\)}{Introduzione di \textbackslash lor}}\label{introduzione-di-lor}}
+
+Regola \(\lor_{i_1}\) : \[
+\begin{matrix} 
+F_1 \\
+\hline
+F_1 \lor F_2 \\
+\end{matrix}
+\] Regola \(\lor_{i_2}\) : \[
+\begin{matrix} 
+F_2 \\
+\hline
+F_1 \lor F_2 \\
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: se \(F_1\) (\(F_2\)) vale, allora vale anche
+\(F_1 \lor F_2\) \textbf{Lettura top-down}: per dimostrare
+\(F_1 \lor F_2\) è sufficiente dimostrare \(F1\) (\(F_2\))
+
+Le regole \textbf{non sono invertibili}: poiché avendo a disposizione
+due regole tra cui scegliere, non è detto che una valga sempre, ma la
+scelta andrà fatta a seconda delle ipotesi che si hanno.
+
+In un determinato momento della dimostrazione potrebbero essere anche
+errate (non applicabili) entrambe: queste regole si usano solitamente
+alla fine della dimostrazione, quando si è sicuri di quale scegliere.
+
+Diciamo quindi che esse sono \textbf{fortemente non invertibili}.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{eliminazione-di-lor}{%
+\subsubsection{\texorpdfstring{Eliminazione di
+\(\lor\)}{Eliminazione di \textbackslash lor}}\label{eliminazione-di-lor}}
+
+Regola \(\lor_e\) : \[
+\begin{matrix} 
+&&[F_1] && [F_2] \\
+&&\vdots && \vdots \\
+F_1 \lor F_2 && F_3 && F_3 \\
+\hline
+& F_3 
+\end{matrix}
+\]
+
+La regola di eliminazione di \(\lor\) spezza la dimostrazione in due
+casi.
+
+\textbf{Lettura bottom-up}: se vale \(F_1 \lor F_2\) e \(F_3\) vale sia
+quando vale \(F_1\) che quando vale \(F_2\), allora necessariamente
+\(F_3\) vale.
+
+\textbf{Lettura top-down}: per dimostrare qualunque cosa sapendo
+\(F_1 \lor F_2\) è sufficiente procedere per casi, dimostrando la stessa
+cosa assumendo prima che \(F_1\) valga e poi che valga \(F_2\).
+
+La regola è \textbf{parzialmente invertibile}: è invertibile se
+\(F_1 \lor F_2\) è una ipotesi che vale.
+
+L'aggiunta delle ipotesi scaricate nei due rami della dimostrazione è
+lecito in quanto alla fine globalmente si sarà comunque dimostrato per
+tutti i possibili casi.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{introduzione-del-bot}{%
+\subsubsection{\texorpdfstring{Introduzione del
+\(\bot\)}{Introduzione del \textbackslash bot}}\label{introduzione-del-bot}}
+
+Non esistono regole di introduzione del \(\bot\).\\
+È possibile dimostrare \(\bot\) solo se è presente tra le ipotesi o se
+le ipotesi sono inconsistenti.
+
+\hypertarget{eliminazione-del-bot}{%
+\subsubsection{\texorpdfstring{Eliminazione del
+\(\bot\)}{Eliminazione del \textbackslash bot}}\label{eliminazione-del-bot}}
+
+Regola \(\bot_e\) : \[
+\begin{matrix} 
+\bot \\
+\hline
+F \\
+\end{matrix}
+\]
+
+Per dimostrare il bottom a partire da \(F\) devo dimostrare \(F\) zero
+volte (per l'armonia: non esistono regole di introduzione del bottom)
+
+\textbf{Lettura bottom-up}: dal falso segue qualunque cosa.
+
+\textbf{Lettura top-down}: per dimostrare qualunque cosa posso ridurmi a
+dimostrare un assurdo.
+
+Chiaramente una regola \textbf{non invertibile}: la uso solo se vedo
+all'avanti che si possa arrivare a dimostrare il bottom.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{introduzione-del-top}{%
+\subsubsection{\texorpdfstring{Introduzione del
+\(\top\)}{Introduzione del \textbackslash top}}\label{introduzione-del-top}}
+
+Regola \(\top_i\) : \[
+\begin{matrix} 
+\hline
+\top \\
+\end{matrix}
+\]
+
+\textbf{Regola assioma}: per dimostrare \(\top\) non ho bisogno di
+dimostrare nulla: top non è una foglia ma non viene dimostrato in quanto
+rappresenta ciò che è sempre vero.
+
+\textbf{Lettura bottom-up}: il \(\top\) è vero.\\
+\textbf{Lettura top-down}: per dimostrare \(\top\) non debbo fare nulla.
+
+La regola è ovviamente \textbf{invertibile}.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{eliminazione-del-top}{%
+\subsubsection{\texorpdfstring{Eliminazione del
+\(\top\)}{Eliminazione del \textbackslash top}}\label{eliminazione-del-top}}
+
+Regola \(\top_e\): \[
+\begin{matrix} 
+\top \quad\quad F \\
+\hline
+F \\
+\end{matrix}
+\]
+
+La regola è inutile: per dimostrare \(F\) eliminando \(\top\), mi riduco
+a dimostrare \(F\) con nessuna ipotesi aggiuntiva. Utilizzare questa
+regola è sempre un de-tour.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{introduzione-di-rightarrow}{%
+\subsubsection{\texorpdfstring{Introduzione di
+\(\Rightarrow\)}{Introduzione di \textbackslash Rightarrow}}\label{introduzione-di-rightarrow}}
+
+Regola \(\Rightarrow_i\) : \[
+\begin{matrix} 
+[F_1] \\
+\vdots \\
+F_2 \\
+\hline
+F_1 \Rightarrow F_2 
+\end{matrix}
+\]
+
+\textbf{Lettura top-down}: per dimostrare \(F_1 \Rightarrow F_2\) basta
+assumere \(F_1\) e dimostrare \(F_2\).
+
+(\textbf{Lettura bottom-up}: se ipotizzando \(F_1\) dimostro \(F_2\)
+allora \(F_1 \Rightarrow F_2\).)
+
+La lettura bottom-up non si usa mai.
+
+La regola è \textbf{invertibile}.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{eliminazione-di-rightarrow}{%
+\subsubsection{\texorpdfstring{Eliminazione di
+\(\Rightarrow\)}{Eliminazione di \textbackslash Rightarrow}}\label{eliminazione-di-rightarrow}}
+
+Regola \(\Rightarrow_e\) (o \textbf{modus ponens}): \[
+\begin{matrix} 
+F_1\Rightarrow F_2 \quad\quad F_1 \\
+\hline
+F_2 \\
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: se vale \(F_1\) e \(F_1 \Rightarrow F_2\),
+allora necessariamente vale \(F_2\).
+
+Non è \textbf{né invertibile né parzialmente invertibile}: anche se
+\(F_1 \Rightarrow F_2\) è dimostrabile, non è detto che \(F_1\) sia
+dimostrabile.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{introduzione-del}{%
+\subsubsection{Introduzione del ¬}\label{introduzione-del}}
+
+Poiché in logica classica \(\neg F \equiv (F \Rightarrow \bot)\),
+possiamo derivare le regole del \(\neg\) come caso speciale di quelle
+del \(\Rightarrow\).
+
+Regola \(\neg_i\) : \[
+\begin{matrix} 
+[F_1] \\
+\vdots \\
+\bot \\
+\hline
+\neg F_1 
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: se ipotizzando \(F_1\) dimostro l'assurdo
+allora vale \(\neg F_1\).
+
+\textbf{Lettura top-down}: per dimostrare \(F_1\) basta assumere \(F_1\)
+e dimostrare l'assurdo.
+
+La regola è \textbf{invertibile}.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{eliminazione-del-neg}{%
+\subsubsection{\texorpdfstring{Eliminazione del
+\(\neg\)}{Eliminazione del \textbackslash neg}}\label{eliminazione-del-neg}}
+
+Regola \(\neg_e\) : \[
+\begin{matrix} 
+F_1 \quad\quad \neg F_1 \\
+\hline
+\bot \\
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: è assurdo avere sia \(F_1\) che
+\(\neg F_1\).
+
+\textbf{Lettura top-down}: per dimostrare l'assurdo basta dimostrare
+qualcosa e il suo contrario.
+
+Di fatto è una regola per dimostrare bottom.
+
+La regola \textbf{non sarebbe invertibile} a priori (essendo
+un'eliminazione di un implica).\\
+Ma se sto dimostrando bottom, o ho fatto un errore, oppure bottom è
+dimostrabile: in tal caso che le ipotesi siano inconsistenti è l'unica
+possibilità. Quindi dal momento in cui arrivo a dimostrare bottom, tutto
+è invertibile, perché non ho possibilità di mettermi in un vicolo ceco
+(se arrivo a un \(F\) non dimostrabile potrei usare la regola di
+eliminazione del bottom, per tornare a dimostrare bottom).\\
+La regola diventa quindi \textbf{invertibile}, ma bisogna stare attenti
+a scegliere \(F_1\) in modo corretto.
+
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{6pt}
+
+\hypertarget{correttezza-e-completezza-delle-regole}{%
+\subsection{Correttezza e completezza delle
+regole}\label{correttezza-e-completezza-delle-regole}}
+
+Il set di regole dipende dalla logica scelta. In logiche diverse le
+regole possono essere diverse / applicarsi in modo diverso, inoltre
+scegliere una logica significa scegliere un significato di ``valere''.
+
+Per scegliere un significato di valere, esistono 2 approcci:
+
+\begin{itemize}
+\tightlist
+\item
+  utilitaristico: scegliamo un significato perché è utile per i fini per
+  i quali mi serve tale regola
+\item
+  filosofico: scegliamo una filosofia che ci permette un certo tipo di
+  approccio
+\end{itemize}
+
+Utilizziamo un metodo filosofico.
+
+Un altro requisito di un set di regole dovrebbe essere la
+\textbf{completezza}, ovvero: \textbf{ogni cosa vera è dimostrabile}.
+
+In logia classica ci sono però due tautologie (conseguenza logica
+dell'insieme vuoto) che non possiamo dimostrare con il set di regole
+visto fin'ora:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Terzo escluso (Excluded Middle, EM)}: \(\Vdash A \lor \neg A\)
+\item
+  \textbf{Ragionamento per assurdo (RAA)}:
+  \(\Vdash \neg \neg A \Rightarrow A\)
+\end{itemize}
+
+Quindi la deduzione naturale vista fin ora non è completa rispetto alla
+semantica classica.
+
+A questo punto si può procedere in due modi:
+
+\begin{itemize}
+\tightlist
+\item
+  Introdurre nuove regole
+\item
+  Cercare un'altra logica in cui queste regole sono sensate. In questo
+  caso una risposta è la la logica intuizionistica, che tra l'altro è
+  ottima per gli informatici.
+\end{itemize}
+
+Ciò che però non è dimostrabile intuisticamente (ma che classicamente lo
+sarebbe) ha bisogno di due nuove regole.
+
+\hypertarget{regola-di-dimostrazione-raa}{%
+\subsubsection{Regola di dimostrazione
+RAA}\label{regola-di-dimostrazione-raa}}
+
+Regola \(RAA\) : \[
+\begin{matrix} 
+[\neg F] \\
+\vdots \\
+\bot \\
+\hline
+F 
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: Assumiamo per assurdo \(\neg F\) . . . .
+Assurdo! Quindi \(F\).\\
+\textbf{Lettura top-down}: Per dimostrare \(F\) procediamo per assurdo
+assumendo \(\neg F\) e dimostrando \(\bot\).
+
+Questa è la ``vera'' dimostrazione per assurdo
+
+Per dimostrare \(F\) io suppongo \(\neg F\) e dimostro l'assurdo: in
+questo modo se ottengo che non esistono mondi in cui vale \(\neg F\),
+vuol dire che valeva \(F\)
+
+È una regola invertibile.\\
+È meglio utilizzarla solo se non ho altre possibilità.
+
+\hypertarget{dimostrazione-tramite-em}{%
+\subsubsection{Dimostrazione tramite
+EM}\label{dimostrazione-tramite-em}}
+
+In generale le dimostrazioni classiche effettuate con il solo ausilio
+della RAA possono essere laboriose e/o anti-intuitive.\\
+Tuttavia il principio del terzo escluso (EM) combinato con
+l'eliminazione dell'or fornisce uno schema di prova molto potente
+(analisi per casi su una variabile):
+
+\[
+\begin{matrix} 
+EM &&[A] && [\neg A] \\
+\vdots && \vdots && \vdots \\
+A \lor \neg A && F && F \\
+\hline
+& F
+\end{matrix}
+\]
+
+Dove \(EM\) è la dimostrazione (classica) che \(A \lor \neg A\) vale.
+Essa è possible tramite il ragionamento per assurdo.
+
+\begin{examplebox}[Dimostrazione di EM]
+
+\begin{prooftree}
+\AxiomC{$ [\neg (A\vee \neg A)] $} 
+\AxiomC{$ [\neg (A\vee \neg A)] $} 
+\AxiomC{$ [A] $} 
+\RightLabel{$ \wedge _{i_L} $} 
+\UnaryInfC{$ (A\vee \neg A) $} 
+\RightLabel{$ \neg _e $} 
+\BinaryInfC{$ \bot  $} 
+\RightLabel{$ \neg _i $} 
+\UnaryInfC{$ \neg A $} 
+\RightLabel{$ \wedge _{i_R} $} 
+\UnaryInfC{$ (A\vee \neg A) $} 
+\RightLabel{$ \neg _e $} 
+\BinaryInfC{$ \bot  $} 
+\RightLabel{$ RAA $} 
+\UnaryInfC{$ A\vee \neg A $} 
+\end{prooftree}
+
+\end{examplebox}
+
+\newpage
+
+\hypertarget{logica-del-primordine}{%
+\section{Logica del prim'ordine}\label{logica-del-primordine}}
+
+La logica proposizionale è quella logica le cui connotazioni possono
+denotare valori di verità. Però il ragionamento della logica
+proposizionale, spesso non è abbastanza ricco per esprimere certi
+concetti.
+
+Una logica più ricca è la \textbf{logica del prim'ordine}.
+
+\hypertarget{sintassi-1}{%
+\subsection{Sintassi}\label{sintassi-1}}
+
+La logica del prim'ordine ha due classi distinte di elementi:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Formule (proposizioni)}: connotazioni che denotano valori di
+  verità
+\item
+  \textbf{Termini}: connotazioni che denotano elementi del dominio del
+  discorso (i numeri naturali, gli animali \ldots)
+\end{itemize}
+
+I \textbf{termini} possono rappresentare una delle seguenti categorie:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Variabili}: elementi del dominio del discorso (usati con
+  \(\forall\) e \(\exists\)). Di solito sono rappresentate con lettere
+  minuscole (\(x, y, \dots\))
+\item
+  \textbf{Costanti}: elementi fissati una volta per tutte (Es.
+  \(2, \mathbb{N}, \dots\))
+\item
+  \textbf{Funzioni}: si presentano nella forma \(f^n(t_1, \dots, t_n)\),
+  dove \(n\) rappresenta la arietà (numero di argomenti) e \(t_i\) sono
+  gli argomenti. Le funzioni trasformano elementi (i parametri) in altri
+  elementi del dominio del discorso. Le funzioni \(f^0()\) (funzioni di
+  arietà 0) potrebbero essere usate per rappresentare le costanti (ma
+  spesso si usano semplicemente le costanti)
+\end{itemize}
+
+Le \textbf{proposizioni} possono rappresentare una delle seguenti
+categorie:
+
+\begin{itemize}
+\tightlist
+\item
+  Connettivi/simboli già presenti nella logica proposizionale:
+  \(\bot , \top , P \lor P \dots\)
+\item
+  \textbf{Quantificatore universale}: \(\forall x.P\)
+\item
+  \textbf{Quantificatore esistenziale}: \(\exists x.P\)
+\item
+  \textbf{Predicati}: si presentano nella forma \(P^n(t_1, \dots, t_n)\)
+  ed esprimono valori di verità. A differenza della logica
+  proposizionale possono avere una qualunque arietà \(n\), ma i
+  predicati \(P^0\) rappresentano le variabili proposizionali
+  (\(A, B \dots\))
+\end{itemize}
+
+La logica si chiama del prim'ordine perché quando usiamo \(\forall\) e
+\(\exists\) possiamo usare solo le variabili che rappresentano elementi
+del domino del discorso (\(\forall x. F\)), e non funzioni, predicati
+\ldots{}
+
+\textbf{Nota}: \(f(x)\) non è un'applicazione di funzione in senso
+logico quando, come in teoria degli insiemi, rappresenta un abuso di
+notazione per indicare quell'unico \(y\) t.c.
+\(\langle x, y \rangle \in f\), in quanto \(f\) in questo caso
+rappresenta un insieme (di coppie tali che \ldots) e non una funzione
+logica.
+
+\hypertarget{semantica-classica-della-logica-del-primordine}{%
+\subsection{Semantica classica della logica del
+prim'ordine}\label{semantica-classica-della-logica-del-primordine}}
+
+Un mondo/interpretazione \(v\) fissa un insieme non vuoto \(A\) e
+assegna:
+
+\begin{itemize}
+\tightlist
+\item
+  a ogni costante \(c\) un elemento di \(A\)
+\item
+  a ogni simbolo di funzione n-aria \(f^n\), una funzione n-aria su
+  \(A\): \([[f^n]]^v \in A^{A \times \dots \times A}\)
+\item
+  a ogni simbolo di predicato n-ario \(P^n\), un predicato n-ario su
+  \(A\): \([[P^n]]^v \in \{0, 1\}^{A \times \dots \times A}\)
+\end{itemize}
+
+Quindi il significato dei simboli non è fissato, non è unico, ma può
+variare a secondo del mondo (magari in un mondo \(v\) , vale che
+\([[+]]^v = *\), ovvero la semantica dell'addizione nel mondo \(v\) è
+quella della moltiplicazione)
+
+Semantica di \(\forall\) e \(\exists\) :
+
+\begin{itemize}
+\tightlist
+\item
+  \([[\forall x.F]]^v = 1\) sse la semantica di \(F\) nel mondo \(v\)
+  \textbf{è sempre 1} al variare della semantica di \(x\) su tutti gli
+  elementi di \(A\)
+\item
+  \([[\exists x.F]]^v = 1\) sse la semantica di \(F\) nel mondo \(v\)
+  \textbf{è almeno una volta 1} al variare della semantica di \(x\) su
+  tutti gli elementi di \(A\)
+\end{itemize}
+
+\textbf{Nota}: questa semantica non è più un algoritmo in quanto lavoro
+su insiemi infiniti
+
+\hypertarget{binder}{%
+\subsection{Binder}\label{binder}}
+
+In generale un binder \textbf{lega} una \textbf{variabile} ad uno
+\textbf{scope}. Esistono vari tipi di binder in matematica, informatica,
+logica\ldots{}\\
+I quantificatori \(\forall\), \(\exists\) sono casi particolari di
+\textbf{binder}.
+
+Per il \(\forall\) e \(\exists\) lo scope della variabile che lega va
+dalla dichiarazione di variabile (accanto al simbolo
+\(\forall\)/\(\exists\)), alla fine della formula associata. Tale
+variabile si dice quindi che è \textbf{legata} al quantificatore.
+
+Nel caso di scope innestati, avviene lo \textbf{shadowing} se viene
+ri-dichiarata una variabile con lo stesso nome.
+
+\begin{examplebox}[Esempio]
+
+Consideriamo la formula \[
+\forall x.(P(x) \land \exists x.Q(x))
+\] Lo scope associato al \(\forall\) è l'intera formula
+\(P(x) \land \exists x.Q(x)\).\\
+Lo scope associato all'\(\exists\) invece è la formula \(Q(x\)).\\
+Poiché l'\(\exists\) ri-lega la variabile \(x\), la \(x\) che occorre in
+\(Q(x)\) si riferisce ( è legata) al quantificatore esistenziale. Non è
+più possibile riferirsi alla \(x\) legata dal \(\forall\) nello scope
+dell'\(\exists\).\\
+Questo fenomeno è proprio lo \textbf{shadowing}.
+
+\end{examplebox}
+
+Per questo si possono introdurre i \textbf{diagrammi di legame}
+(informali).\\
+Per ottenere il relativo diagramma di legame, scritta un'espressione:
+
+\begin{itemize}
+\tightlist
+\item
+  collegare ogni occorrenza di una \textbf{variabile legata} con il
+  binder che la lega, per mezzo di una freccia
+\item
+  le variabili non legata sono dette \textbf{libere}: indicarle con una
+  freccia che punta all'infinito su cui scrivete \textbf{il nome della
+  variabile}
+\end{itemize}
+
+Quello che determina la semantica di una formula è il diagramma di
+legame, non i nomi delle variabili. Quindi due formule scritte usando
+nomi diversi per le variabili possono essere la stessa formula se hanno
+lo stesso diagramma di legame.
+
+Definizione delle \textbf{variabili libere} (free variables) per
+ricorsione:
+
+\[
+\begin{aligned}
+FV(x) &&& := \{x\} \\[6pt] 
+FV(f^n(t_1,\dots, t_n)) &&& := FV(t_1) \cup \dots\cup FV(t_n) \\[6pt]
+FV(P^n(t_1,\dots, t_n)) &&& := FV(t_1) \cup \dots\cup FV(t_n) \\[6pt]
+FV(\bot) = FV(\top) &&& := \emptyset \\[6pt]
+FV(\neg P) &&& := FV(P) \\[6pt]
+FV(P \land Q) = FV(P \lor Q) = FV(P \Rightarrow Q) &&& := FV(P) \cup FV(Q) \\[6pt]
+FV(\forall x.P) = FV(\exists x.P) &&& := FV(P) \setminus \{x\}
+\end{aligned}
+\]
+
+In particolare è importante notare come i quantificatori catturano la
+variabile (\(x\)), il che la rende non più una variabile libera.
+
+\hypertarget{alpha-convertibilituxe0}{%
+\subsection{\texorpdfstring{\(\alpha\)-convertibilità}{\textbackslash alpha-convertibilità}}\label{alpha-convertibilituxe0}}
+
+I nomi scelti per le variabili legate non hanno alcuna importanza se
+generano lo stesso diagramma di legame.
+
+Le formule equivalenti (=stesso diagramma di legame) si dicono
+\textbf{\(\alpha\)-convertibili}. E rappresentano proprio la stessa
+formula.
+
+Bisogna notare però che a volte cambiare i nomi delle variabili porta a
+formule non \(\alpha\)-convertibili!
+
+\begin{examplebox}[Esempio]
+
+La formula \[
+\forall x.P(x) \land \exists y.P(x, y)
+\] è equivalente a \[
+\forall z.P(z) \land \exists y.P(z, y)
+\] mentre non è equivalente (a causa dello shadowing) a \[
+\forall z.P(z) \land \exists z.P(z, z)
+\]
+
+\end{examplebox}
+
+Per essere più formali quando si lavora con una formula, bisognerebbe
+invece lavorare con la rispettiva classe di equivalenza per
+\(\equiv_\alpha\) .
+
+\hypertarget{sostituzione}{%
+\subsection{Sostituzione}\label{sostituzione}}
+
+Il senso del quantificatore universale \(\forall x.P(x)\) è che da esso
+dobbiamo essere in grado di dedurre \(P(t)\) per un qualunque termine
+\(t\).
+
+Serve quindi una \textbf{funzione di sostituzione} di un \(t\) al posto
+di una variabile \(x\) precedentemente legata. Nel fare questo bisogna
+però fare attenzione a non modificare il diagramma di legame della
+formula.
+
+Utilizziamo la notazione \([t/x]\) a destra della formula per indicare
+che mettiamo \(t\) al posto di \(x\). Questo diventa uno specie di
+binder che cattura tutte le variabili libere di nome \(x\) con scope
+tutta la formula a sinistra.
+
+La sostituzione di un termine per una variabile nelle formule che
+prevedono \(\forall\) e \(\exists\) si comporta nel seguente modo (per
+induzione strutturale sul termine in cui avviene la sostituzione):
+
+\[
+\begin{aligned}
+(\forall x.P)[t/x] &&& = \forall x.P \\[6pt]
+(\forall y.P)[t/x] &&& = \forall z.(P[z/y][t/x]) \text{ per } z \notin FV(t) \cup FV(P) \\[6pt]
+(\exists x.P)[t/x] &&& = \exists x.P \\[6pt]
+(\exists y.P)[t/x] &&& = \exists z.(P[z/y][t/x]) \text{ per } z \notin FV(t) \cup FV(P) \\[6pt]
+\end{aligned}
+\]
+
+In pratica quando eseguiamo una sostituzione in una formula che presenta
+un binder, dobbiamo anche cambiare la variabile legata al binder (se
+necessario), in modo che essa non appartenga alle variabili libere del
+termine \(t\) che abbiamo scelto per la spedizione né alle variabili
+libere di \(P\).\\
+Per evitare problemi è sempre meglio scegliere una variabile fresca.\\
+Una variabile \textbf{fresca} è una variabile mai usata prima: si
+introduce per sostituire i nomi di altre variabili che sennò
+causerebbero problemi
+
+\newpage
+
+\hypertarget{deduzione-naturale-per-la-logica-del-primordine}{%
+\section{Deduzione naturale per la logica del
+prim'ordine}\label{deduzione-naturale-per-la-logica-del-primordine}}
+
+La logica del prim'ordine estende le proposizioni della logica
+proposizionale in due modi:
+
+\begin{itemize}
+\tightlist
+\item
+  Il caso \(P^0\) è generalizzato a \(P^n(t_1, \dots , t_n)\): nessuna
+  nuova regola necessaria, ovvero ogni proposizione \(P\) si comporterà
+  come una variabile proposizionale nella logica proposizionale.
+\item
+  Vengono aggiunti i \textbf{quantificatori universale ed esistenziale}:
+  è sufficiente introdurre le relative regole di introduzione ed
+  eliminazione.
+\end{itemize}
+
+Una cosa che capita spesso in logica del prim'ordine è cambiare il nome
+alle variabili, quando la formula mantiene la relazione di equivalenza
+\(\equiv_\alpha\). Questo non è un passaggio logico, è sempre possibile
+farlo, senza usare nessuna regola in particolare.
+
+Quando effettuiamo un cambio di variabile sempre meglio scegliere una
+\textbf{variabile fresca}.
+
+\hypertarget{introduzione-del-forall}{%
+\subsection{\texorpdfstring{Introduzione del
+\(\forall\)}{Introduzione del \textbackslash forall}}\label{introduzione-del-forall}}
+
+Regola \(\forall_i\): \[
+\begin{matrix} 
+\vdots \\
+P[y/x] \\
+\hline 
+\forall x. P \\
+\end{matrix}
+\] Dove \(y \not \in FV(Foglie(\vdots))\) e dove \(Foglie(\vdots)\) sono
+le foglie non (ancora!) cancellate nel sotto-albero \(\vdots\)
+
+In pratica bisogna verificare di prendere una variabile \(y\) che non
+appartenga alle variabili libere dell'albero. Dopodiché si passa a
+dimostrare \(P\) sostituendo \(y\) al posto di \(x\).
+
+\textbf{Importante}: \(y\) deve essere una variabile, non una costante.
+
+\textbf{Lettura bottom-up}: se \(P\) vale per una \(y\) qualunque
+(scelta arbitrariamente), allora per ogni \(x\) vale \(P\).
+
+\textbf{Lettura top-down}: per dimostrare \(x.P\) è sufficiente
+scegliere una \(y\) sulla quale non sappiamo nulla e poi dimostrare
+\(P[y/x]\)
+
+La regola \textbf{è invertibile}. Applicarla subito ogni volta.
+
+\hypertarget{eliminazione-del-forall}{%
+\subsection{\texorpdfstring{Eliminazione del
+\(\forall\)}{Eliminazione del \textbackslash forall}}\label{eliminazione-del-forall}}
+
+Regola \(\forall_e\): \[
+\begin{matrix} 
+\forall x. P \\
+\hline 
+P[y/x] \\
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: se \(P\) vale per tutti gli \(x\), allora
+vale in particolare per \(y\).
+
+\textbf{Lettura top-down}: per dimostrare \(P[y/x]\) è sufficiente
+dimostrare il teorema generalizzato \(\forall x.P\)
+
+La regola è chiaramente \textbf{non invertibile}.
+
+\hypertarget{introduzione-del-exists}{%
+\subsection{\texorpdfstring{Introduzione del
+\(\exists\)}{Introduzione del \textbackslash exists}}\label{introduzione-del-exists}}
+
+Regola \(\exists_i\): \[
+\begin{matrix} 
+P[y/x] \\
+\hline 
+\exists x.P \\
+\end{matrix}
+\]
+
+\textbf{Lettura bottom-up}: se \(P\) vale per \(y\) allora esiste un
+\(x\) per cui \(P\) vale.
+
+\textbf{Lettura top-down}: per dimostrare \(\exists x.P\) bisogna
+scegliere un \(y\) per il quale \(P[y/x]\) valga e dimostrarlo.
+
+La regola è ovviamente non invertibile. \textbf{Fortemente non
+invertibile}.
+
+\hypertarget{eliminazione-del-exists}{%
+\subsection{\texorpdfstring{Eliminazione del
+\(\exists\)}{Eliminazione del \textbackslash exists}}\label{eliminazione-del-exists}}
+
+Regola \(\exists_e\): \[
+\begin{matrix} 
+&&[P[y/x]] \\
+&&\vdots \\
+\exists x.P && C \\
+\hline
+& C 
+\end{matrix}
+\] Dove \(y \not \in FV(Foglie(\vdots)) \cup FV(C))\) e dove
+\(Foglie(\vdots)\) sono le foglie non (ancora!) cancellate nel
+sotto-albero \(\vdots\)
+
+\textbf{Lettura bottom-up}: se \(\exists x.P\) e se dimostro \(C\) sotto
+l'ipotesi che \(P\) valga per un generico \(y\), allora \(C\) vale.
+
+\textbf{Lettura top-down}: per dimostrare un qualche \(C\) sotto
+l'ipotesi \(\exists x.P\) è sufficiente dimostrare \(C\) assumendo \(P\)
+per una qualche variabile generica \(y\).
+
+La regola è \textbf{parzialmente invertibile}: la usiamo subito se
+abbiamo l'ipotesi \(\exists x.P\)
+
+\newpage
+
+\hypertarget{ricorsione-e-induzione}{%
+\section{Ricorsione e induzione}\label{ricorsione-e-induzione}}
+
+\hypertarget{introduzione-1}{%
+\subsection{Introduzione}\label{introduzione-1}}
+
+Iniziamo osservando un po' di differenze tra la matematica e
+l'informatica.
+
+In matematica:
+
+\begin{itemize}
+\tightlist
+\item
+  Ogni entità è esprimibile usando insiemi
+\item
+  Alcune entità possono avere solo descrizioni infinite (es. i numeri
+  reali)
+\item
+  Una funzione è un'insieme di coppie (dominio \(\to\) codominio) e se
+  tale insieme è infinito non mi dà nessuna procedura di calcolo
+\end{itemize}
+
+In informatica:
+
+\begin{itemize}
+\tightlist
+\item
+  Un dato ha sempre una descrizione finita in quanto deve stare in
+  memoria (che è finita)
+\item
+  L'insieme dei dati è sempre enumerabile: la memoria è una sequenza di
+  bit, tutti i dati devono stare in quella sequenza
+\item
+  Un dato può però avere una dimensione \textbf{unbounded}. La
+  dimensione è unbounded quando la dimensione del singolo dato è finita,
+  ma per ogni dimensione arbitraria è possibile creare un dato di quella
+  dimensione
+\item
+  Un dato unbounded ha sempre \textbf{struttura ricorsiva}: all'interno
+  di un dato più grande compare un dato (dello stesso tipo) più piccolo.
+  Infatti se il dato fosse caotico non si potrebbe creare un unico
+  codice per analizzarlo (che funzioni su dati di dimensione
+  arbitraria), ma servirebbe un codice unbounded, il che non sarebbe
+  possibile.
+\end{itemize}
+
+\begin{examplebox}[Esempio]
+
+\[
+\mathbb{N} ::= O \; |\; S\;\mathbb{N}
+\] Ovvero: ``un numero naturale o è lo zero (costruttore \(O\) ) o è il
+successore di un numero naturale \(n\) (costruttore \(S \; n\))''
+
+\end{examplebox}
+
+\begin{itemize}
+\tightlist
+\item
+  Un programma o funzione (ma nel senso informatico) descrive una
+  procedura di calcolo che partendo dall'input dà un output
+\end{itemize}
+
+In informatica dato un programma \(f\), si può sempre definire la
+funzione matematica associata definita come: \[
+\{\langle i, o \rangle \; | \; f(i) = o\}
+\] ovvero tutte le possibili coppie input-output tali che
+\(f(input) = output\) .
+
+Affinché un programma finito (es. 10 linee) possa processare un input di
+dimensione unbounded (es. di taglia 10, 100, 1000, 10000, . . . ) il
+codice del programma deve essere eseguito ripetutamente.\\
+Se il linguaggio di programmazione è \textbf{imperativo}, si può mutare
+il valore delle variabili, quindi possiamo usare strutture ciclo
+(\textbf{while}, \textbf{for}, \ldots).\\
+Nei \textbf{linguaggi di programmazione funzionali} invece non esiste
+l'assegnamento (cercano di avvicinarsi al linguaggio matematico), quindi
+non esisto i cicli: per eseguire più volte lo stesso codice, si usano
+chiamate \textbf{ricorsive}.
+
+Tutte le volte che il codice può ripetersi si rischia però la
+\textbf{divergenza}: ovvero quando, dato un certo input, il programma
+non termina mai.
+
+Presto vedremo la \textbf{ricorsione strutturale}: ricorsione vincolata
+che non diverge mai.
+
+\hypertarget{tipi-di-dato}{%
+\subsection{Tipi di dato}\label{tipi-di-dato}}
+
+In un linguaggio di programmazione funzionale non esistono dati come:
+
+\begin{itemize}
+\tightlist
+\item
+  Puntatori
+\item
+  Classi
+\item
+  Array
+\item
+  \ldots{}
+\end{itemize}
+
+In un linguaggio di tipo funzionale invece gli unici tipi di dati
+disponibili sono un \textbf{Tipo di Dato Algebrico (ADT)}, che sono
+definiti da:
+
+\begin{itemize}
+\tightlist
+\item
+  un \textbf{nome} del tipo
+\item
+  una lista di \textbf{possibili forme} (o \textbf{costruttori}) per
+  quel tipo
+\item
+  ogni dato può contenere altri dati specificandone il loro tipo
+\item
+  la \textbf{ricorsione} è ammessa, ovvero i sotto-dati possono essere
+  della stessa forma
+\end{itemize}
+
+Ogni \textbf{valore} è rappresentato da un \textbf{albero} in cui nodi
+sono una possibile formula e i cui sotto-alberi sono altri valori.
+
+Se un dato non è definito con la ricorsione, vine anche detto dato
+\textbf{enumerato} (es. i booleani)
+
+\begin{examplebox}[Esempi di tipi di dati algebrici]
+
+\textbf{Booleani}: \[
+\mathbb{B} ::= \text{tt} \; | \; \text{ff}
+\] Es: \(\text{tt}\) rappresenta il vero, \(\text{ff}\) il falso. \[
+\] \textbf{Numeri naturali}: \[
+\mathbb{N} ::= O \; | \; S \; \mathbb{N}
+\] Es: \(S(S(S(SO)))\) è il numero 4. \[
+\] \textbf{Liste di numeri naturali:} \[
+\mathbb{L} ::= [] \; | \; \mathbb{N} :: \mathbb{L}
+\] Es. \((SO)::(O::((S(SO))::[]))\) è la lista \([1, 0, 2]\)\\
+In generale una lista può essere o la lista vuota, o una testa (un
+numero naturale), seguito da una lista.\\
+L'operatore :: viene detto ``\textbf{cons}'' e rappresenta il
+costruttore.
+
+\end{examplebox}
+
+Anche le formule dell logica proposizionale e gli alberi sono tipi di
+dato algebrici
+
+\textbf{Generalizzazioni}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Polimorfismo}: un dato (e tutte le sue funzioni associate) è
+  polimorfo quando si può parametrizzare rispetto a un tipo generale
+  (come con i template in c++), ma una volta istanziato il dato tutti i
+  valori devono essere dello stesso tipo.
+\item
+  \textbf{Tipi di dato algebrici mutui}: due dati che devo definire
+  contemporaneamente perché dipendono uno dall'altro (es. numeri pari e
+  dispari). Per lavorarci devo avere coppie di funzioni (funzioni
+  mutue). Anche gli alberi n-ari sono mutui con le liste (di alberi).
+\end{enumerate}
+
+\hypertarget{programmi}{%
+\subsection{Programmi}\label{programmi}}
+
+I programmi sono costituiti da liste di funzioni e hanno solo tipi di
+dato algebrici.
+
+La definizione di una funzione è fatta da tante righe del seguente tipo:
+\[
+f(w_1, x_1, \dots,  x_m) = \dots corpo_1 \dots \\
+\] \[
+\vdots 
+\] \[
+f(w_n, x_1, \dots,  x_m) = \dots corpo_n \dots
+\]
+
+\begin{itemize}
+\item
+  \(f\) è il nome della funzione (m + 1)-aria (m = 0 ammesso)
+\item
+  \(w_i\) è un \textbf{pattern}: è una forma possibile dell'input (un
+  costruttore). Servono tante righe quanti costruttori ci sono
+\item
+  \(x_1, \dots , x_n\) sono parametri formali (come in un qualsiasi
+  linguaggio di programmazione)
+\item
+  \(corpo_i\) è l'output associato: può contenere
+
+  \begin{itemize}
+  \tightlist
+  \item
+    forme di tipi di dato
+  \item
+    parametri formali
+  \item
+    if-then-else
+  \item
+    chiamate a funzione
+  \end{itemize}
+\end{itemize}
+
+\begin{examplebox}[Quali funzioni si possono usare (all'esame)?]
+
+\begin{itemize}
+\tightlist
+\item
+  Tutte quelle ovviamente implementabili e non interessanti ai fini
+  dell'esercizio (p.e. operatori algebrici +, ∗, =, \(\leq\), . . .,
+  operatori booleani \&\&, \textbar\textbar, . . ., etc.)
+\item
+  Tutte quelle definite precedentemente nell'esercizio
+\item
+  Una funzione \(f\) può invocare la stessa \(f\) (chiamata ricorsiva);
+  in tal caso la \(f\) si dice \textbf{funzione ricorsiva}. Si possono
+  usare solo funzioni \textbf{strutturalmente ricorsive}
+\end{itemize}
+
+\end{examplebox}
+
+\hypertarget{pattern-matching}{%
+\subsection{Pattern matching}\label{pattern-matching}}
+
+Dato un pattern \(\omega\) e un dato algebrico \(E,\; \omega\) fa match
+con \(E\) se è possibile \textbf{risolvere l'equazione \(\omega = E\)
+sostituendo ai parametri formali contenuti in \(\omega\) delle
+sotto-espressioni di \(E\)} .
+
+\begin{examplebox}[Esempio]
+
+\(\langle x, y \rangle\) fa match con \(\langle O::[], tt \rangle\)
+attraverso la sostituzione \([(O::[])/x \; ; \; tt/y]\)\\
+\(\langle x, y \rangle\) \textbf{non} fa match con \(O::SO::[]\)
+
+\end{examplebox}
+
+L'invocazione di una funzione avviene per \textbf{pattern matching}.
+Supponendo che ci sia una e una sola dichiarazione
+\(f(w_i, x_1, \dots, x_m) = \dots corpo_i \dots\) tale che \(w_i\)
+faccia match con \(E_0\), allora la chiamata \(f(E_0, E_1, \dots, E_m)\)
+viene riscritta in \(corpo_i\) dopo aver sostituito a ogni parametro
+formale del pattern la soluzione dell'equazione \(\omega = E\) e a ogni
+\textbf{parametro formale} \(x_j\) il parametro attuale (espressione)
+\(E_j\) .
+
+\textbf{Nota}: nel caso più dichiarazioni di funzione facciano matching
+con una chiamata di funzione potrebbe esserci una soluzione \textbf{non
+deterministica}.
+
+\hypertarget{ricorsione-strutturale}{%
+\subsection{Ricorsione strutturale}\label{ricorsione-strutturale}}
+
+I tipi di dato algebrici hanno struttura ricorsiva, ovvero un elemento o
+è \textbf{atomico}, o è composto a partire da parti più piccole, alcune
+con la stessa struttura.
+
+Su strutture di questo tipo è possibile risolvere un problema con una
+funzione per \textbf{ricorsione strutturale}:
+
+\begin{itemize}
+\tightlist
+\item
+  Abbiamo una funzione (dichiarazione) per ogni costruttore del tipo di
+  dato su cui vogliamo ricorrere (la \(f\) deve considerare come pattern
+  tutte le forme del dato una e una sola volta).
+\item
+  Se il costruttore è atomico, la soluzione è semplice e si risolve
+  direttamente (restituiamo direttamente l'output)
+\item
+  Nei casi composti si risolve prima il problema \textbf{sulle
+  componenti} (chiamata ricorsiva sulla parte più piccola del dato) e
+  poi si sintetizza la risposta per il caso composto, avendo a
+  disposizione la soluzione per le componenti più piccole.
+\item
+  Quando la funzione viene chiamata ricorsivamente, bisogna passare come
+  primo parametro attuale solamente uno dei parametri formali contenuti
+  nel pattern
+\end{itemize}
+
+\begin{examplebox}[Teorema]
+
+\textbf{Tutte le funzioni definite per ricorsione strutturale convergono
+su ogni input.}
+
+\end{examplebox}
+
+\begin{examplebox}[Esempio di ricorsione strutturale:]
+
+\begin{lstlisting}
+-- Problema 5: dato un numero x e una lista di liste di numeri LL inserire x in testa a ognuna delle liste di LL
+
+def inserth : Nat -> List (List Nat) -> List (List Nat)
+ | x, [] => []
+ | x, L::LL => (x :: L) :: (inserth x LL)
+
+#eval inserth 1 [[2,3],[4,5]]
+
+-- Problema 4: date due liste concatenarle
+-- Esempio:
+--  conc [1,2] [3,4] = [1,2,3,4]
+
+def conc : List X -> List X -> List X
+ | [], L₂ => L₂
+ | h::tl, L₂ => h :: (conc tl L₂)
+
+#eval conc [1,2] [3,4]
+
+-- Problema 3: dato un numero x e una lista di numeri L, restutuire la lista di lista ottenuta inserendo x in tutte le possibili posizioni di L
+-- Esempio:
+--  insert 1 [2,3] = [[1,2,3],[2,1,3],[2,3,1]]
+
+def insert : Nat -> List Nat -> List (List Nat)
+ | x, [] => [[x]]
+ | x, h::L => (x::h::L) :: inserth h (insert x L)
+
+#eval insert 1 [2,3]
+
+-- Problema 2: dato un numero x e data una lista di liste LL restituire la lista ottenuta inserendo x in tutte le possibili posizioni in ognuna delle liste di LL
+-- Esempio:
+--  insertll 1 [[2,3]], [3,2]] = [[1,2,3],[2,1,3],[2,3,1],[1,3,2]...]
+
+def insertll : Nat -> List (List Nat) -> List (List Nat)
+ | x, [] => []
+ | x, L::LL => conc (insert x L) (insertll x LL)
+
+#eval insertll 1 [[2,3],[3,4]]
+
+-- Problema 1: data una lista di naturali L restituire come lista l'insieme di tutte le permutazioni di L
+-- Esempio: 
+--  permut [1,2,3] = [[1,2,3],[1,3,2],[2,1,3] ...]
+
+def permut : List Nat -> List (List Nat)
+ | [] => [[]] -- [] :: []
+ | h::tl => insertll h (permut tl)
+
+#eval permut [1,2,3]
+\end{lstlisting}
+
+\end{examplebox}
+
+\hypertarget{induzione-strutturale}{%
+\subsection{Induzione strutturale}\label{induzione-strutturale}}
+
+Come si dimostra che una funzione definita per ricorsione strutturale
+gode di una certa proprietà? Usando l'\textbf{induzione strutturale}!
+
+Sia \(P\) una proprietà che vogliamo dimostrare valere su tutti i valori
+di un tipo di dato algebrico. In logica del prim'ordine dovremmo usare
+la regola del \(\forall\) (ovvero usare un input generico). L'induzione
+strutturale invece ci permette di ragionare per ricorsione strutturale.
+La dimostrazione viene quindi data in questo modo:
+
+\begin{itemize}
+\tightlist
+\item
+  Una sotto-dimostrazione per ogni forma del tipo di dato (pattern).
+\item
+  In ogni sotto-dimostrazione possiamo assumere che \(P\) già valga su
+  tutti i parametri formali contenuti nel pattern (\textbf{ipotesi
+  induttive}). Non è una vera assunzione, infatti è la chiamata
+  ricorsiva ci dà tale ipotesi, non ci si sta restringendo a dei casi
+  particolari (come avviene invece nel caso di un'implicazione).
+\end{itemize}
+
+Una dimostrazione per induzione strutturale prevede un certo numero di
+\textbf{fasi}:
+
+Sempre all'inizio della dimostrazione:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Fase di proclamazione}: esplicitiamo che procediamo per
+  induzione strutturale identificando un certo input per dimostrare la
+  proprietà \(P\) (su tale dato). In questa fase bisogna osservare le
+  funzioni e capire quale input utilizzare: in generale si sceglie
+  quello che viene utilizzato maggiormente (velocizza la
+  dimostrazione).\\
+  ``procedo per induzione strutturale\ldots{}'' diventa un binder per
+  quello che andiamo a dimostrare (la variabile che rappresenta il dato
+  su cui ricorriamo)
+\end{enumerate}
+
+Poi per ogni caso (pattern):
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  \textbf{Fase dell'ipotesi induttiva}: assumiamo che la proprietà \(P\)
+  valga per per la componente ricorsiva (più piccola) del dato su cui
+  sto lavorando per induzione. Nel caso ci troviamo nel caso di un
+  pattern atomico, questa fase non viene effettuata.
+\item
+  \textbf{Fase di enunciazione}: enunciamo cosa dobbiamo dimostrare,
+  dopo aver fatto la sostituzione del dato generale, con il pattern del
+  caso in cui ci troviamo.
+\item
+  \textbf{Fase di semplificazione}: avendo in input casi particolari e
+  non più generali, possiamo espandere le definizioni, osservando come
+  il programma calcola in tali casi, andando così a espandere e
+  semplificare ciò che dobbiamo dimostrare.
+\item
+  \textbf{Fase di prova}: concludiamo la prova con un'usuale
+  dimostrazione in logica del prim'ordine. \[
+  \]
+\end{enumerate}
+
+\begin{examplebox}[Esempio di esercizio:]
+
+Considerare alberi binari definiti dalla grammatica: \[
+T ::= N \; | \; \langle T, N, T \rangle
+\] \[
+\] Considerare le seguenti funzioni: \[
+\begin{aligned}
+sum(n) = & \quad n  \\
+sum(\langle T, n, T \rangle) = &  \quad sum(L) + n + sum(R)  
+\\ \\
+prune(n) = & \quad n     \\
+prune(\langle T, n, T \rangle) =
+& \quad \langle if \; sum(prune(L)) = 0 \;then \; 0 \; else \; prune(L), \\
+& \quad \;  n,\\
+& \quad \; if \; sum(prune(R) = 0 \; then \; 0 \; else \; prune(L) \rangle \\
+\end{aligned}
+\] \[
+\] Dimostrare, per induzione strutturale, che
+\(\forall T. sum(prune(T)) = sum(T)\) \[
+\] \textbf{Lemma}:\\
+\(\forall T. sum(\)\textbf{if} \(sum(T) = 0\) \textbf{then} \(0\)
+\textbf{else} \(prune(T))\) = \(sum(prune(T))\)\\
+\textbf{Dimostrazione}:\\
+Sia \(T\) un albero.\\
+Procediamo per casi su \(sum(T) = 0 \lor sum(T) \not = 0\):\\
+Caso \(sum(T) = 0\):\\
+Devo dimostrare \(sum(0) = sum(prune(0))\), che è equivalente a
+\(0 = 0\).\\
+Ovvio per proprietà riflessiva dell'uguaglianza.\\
+Caso \(sum(T) \not = 0\) :\\
+Devo dimostrare \(sum(prune(T)) = sum(prune(T))\) .\\
+Ovvio per proprietà riflessiva dell'uguaglianza.\\
+\[
+\] \textbf{Teorema}:\\
+\(\forall T. sum(prune(T)) = sum(T)\)\\
+\textbf{Dimostrazione}:\\
+Procedo per induzione strutturale su \(T\) per dimostrare
+\(sum(prune(T)) = sum(T)\) .\\
+Caso \(T = n\) :\\
+Devo dimostrare \(sum(prune(n)) = sum(n)\),\\
+che è equivalente a \(sum(n) = n\), che è equivalente a \(n = n\).\\
+Ovvio per proprietà riflessiva dell'uguaglianza.\\
+Caso \(T = \; \langle L, n, R \rangle\) :\\
+Per l'ipotesi induttiva so che \(sum(prune(L)) = sum(L)\) (\(I_L\)) e
+che \(sum(prune(R)) = sum(R)\) (\(I_R\)) .\\
+Devo dimostrare
+\(sum(prune(\langle L, n, R \rangle)) = sum(\langle L, n, R \rangle)\),\\
+che è equivalente a\\
+\(sum(\langle(\)\textbf{if} \(sum(prune(L)) = 0\) \textbf{then} \(0\)
+\textbf{else} \(prune(L)), n, (\)\textbf{if} \(sum(prune(R)) = 0\)
+\textbf{then} \(0\) \textbf{else}
+\(prune(L))\rangle) = sum(L) + n + sum(R)\) ,\\
+che è equivalente a\\
+\(sum(\)\textbf{if} \(sum(prune(L)) = 0\) \textbf{then} \(0\)
+\textbf{else} \(prune(L)) + n + (\)\textbf{if} \(sum(prune(R)) = 0\)
+\textbf{then} \(0\) \textbf{else} \(prune(L)) = sum(L) + n + sum(R)\)
+.\\
+Per il lemma appena dimostrato posso ridurmi a dimostrare
+\(sum(prune(L)) + n + sum(prune(R))= sum(L) + n + sum(R)\) .\\
+Per \(I_L\) e \(I_R\) posso ridurmi a dimostrare
+\(sum(L) + n + sum(R) = sum(L) + n + sum(R)\).\\
+Ovvio per proprietà riflessiva dell'uguaglianza.
+
+\end{examplebox}
+
+\newpage
+
+\end{document}
